@@ -1,95 +1,46 @@
-
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { AuthProvider } from "./context/auth/AuthContext";
-import { ContentProvider } from "./context/content";
-import { AnimatePresence, motion } from "framer-motion";
-import { useIsMobile } from "./hooks/use-mobile";
-import { useEffect } from "react";
+import { useTheme } from '@/context/theme/useTheme';
+import Index from '@/pages/Index';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import Dashboard from '@/pages/Dashboard';
+import AdminDashboard from '@/pages/AdminDashboard';
+import EnterpriseAdminDashboard from '@/pages/EnterpriseAdminDashboard';
+import ContentManagement from '@/pages/ContentManagement';
+import ReportForm from '@/pages/ReportForm';
+import ReportDetails from '@/pages/ReportDetails';
+import CheckStatus from '@/pages/CheckStatus';
+import NotFound from '@/pages/NotFound';
 
-// Import all page components
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import AdminDashboard from "./pages/AdminDashboard";
-import ContentManagement from "./pages/ContentManagement";
-import ReportForm from "./pages/ReportForm";
-import ReportDetails from "./pages/ReportDetails";
-import CheckStatus from "./pages/CheckStatus";
-import NotFound from "./pages/NotFound";
-import Footer from "./components/Footer";
-import MobileNavigation from "./components/MobileNavigation";
+const App = () => {
+  const { theme } = useTheme();
 
-const queryClient = new QueryClient();
-
-const AnimatedRoutes = () => {
-  const location = useLocation();
-  const isMobile = useIsMobile();
-  
-  const showFooter = !isMobile && !['/dashboard', '/login', '/admin-dashboard', '/content-management'].includes(location.pathname);
-  
   useEffect(() => {
-    const theme = localStorage.getItem('theme') || 
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
-  
-  return (
-    <>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={location.pathname}
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 5 }}
-          transition={{ duration: 0.2 }}
-          className={!['/login', '/dashboard', '/admin-dashboard', '/content-management'].includes(location.pathname) ? 'has-bottom-nav pb-16 md:pb-0' : ''}
-        >
-          <Routes location={location}>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            <Route path="/content-management" element={<ContentManagement />} />
-            <Route path="/report" element={<ReportForm />} />
-            <Route path="/report/:id" element={<ReportDetails />} />
-            <Route path="/check-status" element={<CheckStatus />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+    document.body.className = theme;
+  }, [theme]);
 
-          {showFooter && <Footer />}
-        </motion.div>
-      </AnimatePresence>
-      
-      <MobileNavigation />
-    </>
+  return (
+    <div className="App">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/enterprise-admin" element={<EnterpriseAdminDashboard />} />
+          <Route path="/content-management" element={<ContentManagement />} />
+          <Route path="/report" element={<ReportForm />} />
+          <Route path="/report/:id" element={<ReportDetails />} />
+          <Route path="/check-status" element={<CheckStatus />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Toaster />
+      </BrowserRouter>
+    </div>
   );
 };
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <ContentProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AnimatedRoutes />
-          </BrowserRouter>
-        </ContentProvider>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
 
 export default App;
