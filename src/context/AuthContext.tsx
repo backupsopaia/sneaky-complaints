@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { User, AuthContextType } from '../types/auth';
@@ -83,7 +82,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
-      // Regular company login flow - add the demo company credentials
       if (email === "empresa@example.com" && password === "Senha@123") {
         const mockUser: User = {
           id: '1',
@@ -109,7 +107,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      // For demo purposes, accept any other combination
       const mockUser: User = {
         id: '1',
         email,
