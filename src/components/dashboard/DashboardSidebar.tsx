@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Shield, BarChart3, FileText, Settings, LogOut } from "lucide-react";
+import { Shield, BarChart3, FileText, Settings, LogOut, User, Star, Upload, Cog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/context/auth/useAuth';
 
@@ -14,68 +14,85 @@ const DashboardSidebar = ({ activeTab, setActiveTab, handleLogout }: DashboardSi
   const { user } = useAuth();
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 hidden md:block">
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center gap-2">
-          <Shield className="h-6 w-6 text-primary" />
-          <span className="text-lg font-semibold">DenuncieAqui</span>
+    <div className="w-[134px] bg-[#003b87] text-white flex flex-col">
+      <div className="p-4 flex justify-center">
+        <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center">
+          <User size={24} className="text-[#003b87]" />
         </div>
       </div>
       
-      <div className="p-4">
-        <p className="text-xs text-gray-500 mb-1">Empresa</p>
-        <p className="text-sm font-medium truncate">{user?.companyName}</p>
-      </div>
-      
-      <nav className="px-2 py-4">
-        <ul className="space-y-1">
-          <li>
+      <nav className="flex-1 py-6">
+        <ul className="space-y-4">
+          <li className="px-2">
             <button 
               onClick={() => setActiveTab('overview')}
-              className={`w-full text-left px-3 py-2 rounded-md flex items-center gap-2 text-sm ${
+              className={`w-full flex flex-col items-center gap-1 py-3 px-2 rounded-md transition-colors ${
                 activeTab === 'overview' 
-                  ? 'bg-primary/10 text-primary font-medium' 
-                  : 'text-gray-700 hover:bg-gray-100'
+                  ? 'bg-white/10' 
+                  : 'hover:bg-white/5'
               }`}
             >
-              <BarChart3 size={18} />
-              <span>Visão Geral</span>
+              <User size={20} />
+              <span className="text-xs mt-1">Minha</span>
             </button>
           </li>
-          <li>
+          
+          <li className="px-2">
             <button 
               onClick={() => setActiveTab('reports')}
-              className={`w-full text-left px-3 py-2 rounded-md flex items-center gap-2 text-sm ${
+              className={`w-full flex flex-col items-center gap-1 py-3 px-2 rounded-md transition-colors ${
                 activeTab === 'reports' 
-                  ? 'bg-primary/10 text-primary font-medium' 
-                  : 'text-gray-700 hover:bg-gray-100'
+                  ? 'bg-white/10' 
+                  : 'hover:bg-white/5'
               }`}
             >
-              <FileText size={18} />
-              <span>Denúncias</span>
+              <FileText size={20} />
+              <span className="text-xs mt-1">Arquivos</span>
             </button>
           </li>
-          <li>
+          
+          <li className="px-2">
             <button 
-              onClick={() => setActiveTab('settings')}
-              className={`w-full text-left px-3 py-2 rounded-md flex items-center gap-2 text-sm ${
-                activeTab === 'settings' 
-                  ? 'bg-primary/10 text-primary font-medium' 
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
+              onClick={() => {}}
+              className="w-full flex flex-col items-center gap-1 py-3 px-2 rounded-md transition-colors hover:bg-white/5"
             >
-              <Settings size={18} />
-              <span>Configurações</span>
+              <Star size={20} />
+              <span className="text-xs mt-1">Favoritos</span>
+            </button>
+          </li>
+          
+          <li className="px-2">
+            <button 
+              onClick={() => {}}
+              className="w-full flex flex-col items-center gap-1 py-3 px-2 rounded-md transition-colors hover:bg-white/5"
+            >
+              <Upload size={20} />
+              <span className="text-xs mt-1">Carregar</span>
             </button>
           </li>
         </ul>
       </nav>
       
-      <div className="absolute bottom-0 left-0 w-64 p-4 border-t border-gray-200">
-        <Button variant="ghost" className="w-full justify-start gap-2" onClick={handleLogout}>
-          <LogOut size={18} />
-          <span>Sair</span>
-        </Button>
+      <div className="mt-auto p-4">
+        <button 
+          onClick={() => setActiveTab('settings')}
+          className={`w-full flex flex-col items-center gap-1 py-3 px-2 rounded-md transition-colors ${
+            activeTab === 'settings' 
+              ? 'bg-white/10' 
+              : 'hover:bg-white/5'
+          }`}
+        >
+          <Cog size={20} />
+          <span className="text-xs mt-1">Configura</span>
+        </button>
+        
+        <button 
+          onClick={handleLogout}
+          className="w-full flex flex-col items-center gap-1 py-3 px-2 rounded-md transition-colors hover:bg-white/5 mt-4"
+        >
+          <LogOut size={20} />
+          <span className="text-xs mt-1">Sair</span>
+        </button>
       </div>
     </div>
   );
