@@ -26,9 +26,13 @@ const Login = () => {
         isSuperAdmin: loginType === 'admin'
       });
       
-      await login(data.email, data.password, "123456", loginType === 'admin');
+      // Skip the 2FA verification since it's disabled
+      // Pass null for the token since we're not using 2FA
+      await login(data.email, data.password, null, loginType === 'admin');
+      
       completeLogin();
     } catch (error) {
+      console.error('Login failed:', error);
       toast({
         variant: "destructive",
         title: "Falha no login",

@@ -1,3 +1,4 @@
+
 import { toast } from '@/components/ui/use-toast';
 import { User } from '../../types/auth';
 import { encryptData, decryptData, isValidInput, isStrongPassword } from '../../utils/authUtils';
@@ -8,7 +9,7 @@ export const DATA_RETENTION_PERIOD = 365;
 export const handleUserLogin = async (
   email: string, 
   password: string, 
-  token?: string, 
+  token?: string | null, 
   asSuperAdmin?: boolean
 ): Promise<User> => {
   if (!isValidInput(email) || !isValidInput(password)) {
@@ -44,6 +45,8 @@ export const handleUserLogin = async (
     return mockUser;
   }
 
+  // This is a fallback that allows any credentials to work for testing
+  // In a real app, you would validate against a database
   const mockUser: User = {
     id: '1',
     email,
