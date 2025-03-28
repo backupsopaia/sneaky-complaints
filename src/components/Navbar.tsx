@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Shield, Menu, X, FileText, User, Home } from "lucide-react";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useContent } from '@/context/content/ContentContext';
 import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
   const isMobile = useIsMobile();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const { content } = useContent();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -53,26 +55,22 @@ const Navbar = () => {
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >
                     <nav className="flex flex-col space-y-4">
-                      <Link to="/" className="text-sm font-medium hover:text-primary touch-action flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                        <Home size={18} />
-                        <span>Início</span>
-                      </Link>
-                      <Link to="#features" className="text-sm font-medium hover:text-primary touch-action flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                        <Shield size={18} />
-                        <span>Recursos</span>
-                      </Link>
-                      <Link to="#pricing" className="text-sm font-medium hover:text-primary touch-action flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                        <FileText size={18} />
-                        <span>Preços</span>
-                      </Link>
-                      <Link to="/report" className="text-sm font-medium hover:text-primary touch-action flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                        <FileText size={18} />
-                        <span>Fazer Denúncia</span>
-                      </Link>
-                      <Link to="/check-status" className="text-sm font-medium hover:text-primary touch-action flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                        <Shield size={18} />
-                        <span>Verificar Status</span>
-                      </Link>
+                      {content.navigation.map((item) => (
+                        <Link 
+                          key={item.id}
+                          to={item.url} 
+                          className="text-sm font-medium hover:text-primary touch-action flex items-center gap-2" 
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {item.url === '/' && <Home size={18} />}
+                          {item.url.includes('report') && <FileText size={18} />}
+                          {item.url.includes('status') && <Shield size={18} />}
+                          {!item.url.includes('report') && !item.url.includes('status') && item.url !== '/' && (
+                            <FileText size={18} />
+                          )}
+                          <span>{item.label}</span>
+                        </Link>
+                      ))}
                       <div className="pt-2 flex flex-col space-y-2">
                         <Link to="/login" onClick={() => setIsMenuOpen(false)}>
                           <Button variant="outline" className="w-full flex items-center gap-2">
@@ -92,21 +90,15 @@ const Navbar = () => {
           ) : (
             <>
               <nav className="hidden md:flex gap-6">
-                <Link to="/" className="text-sm font-medium hover:text-primary">
-                  Início
-                </Link>
-                <Link to="#features" className="text-sm font-medium hover:text-primary">
-                  Recursos
-                </Link>
-                <Link to="#pricing" className="text-sm font-medium hover:text-primary">
-                  Preços
-                </Link>
-                <Link to="/report" className="text-sm font-medium hover:text-primary">
-                  Fazer Denúncia
-                </Link>
-                <Link to="/check-status" className="text-sm font-medium hover:text-primary">
-                  Verificar Status
-                </Link>
+                {content.navigation.map((item) => (
+                  <Link 
+                    key={item.id} 
+                    to={item.url} 
+                    className="text-sm font-medium hover:text-primary"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
               </nav>
               <div className="hidden md:flex gap-2">
                 <Link to="/login">

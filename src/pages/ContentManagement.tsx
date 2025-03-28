@@ -6,6 +6,8 @@ import { useToast } from "@/hooks/use-toast";
 import AdminHeader from '@/components/admin/AdminHeader';
 import AdminTabNavigation from '@/components/admin/AdminTabNavigation';
 import ContentEditor from '@/components/admin/content/ContentEditor';
+import NavigationEditor from '@/components/admin/content/NavigationEditor';
+import FooterEditor from '@/components/admin/content/FooterEditor';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const ContentManagement = () => {
@@ -41,6 +43,8 @@ const ContentManagement = () => {
               <TabsTrigger value="homepage">Página Inicial</TabsTrigger>
               <TabsTrigger value="login">Tela de Login</TabsTrigger>
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              <TabsTrigger value="navigation">Navegação</TabsTrigger>
+              <TabsTrigger value="footer">Rodapé</TabsTrigger>
             </TabsList>
           </div>
 
@@ -54,6 +58,14 @@ const ContentManagement = () => {
 
           <TabsContent value="dashboard">
             <ContentEditor section="dashboard" />
+          </TabsContent>
+
+          <TabsContent value="navigation">
+            <NavigationEditor />
+          </TabsContent>
+
+          <TabsContent value="footer">
+            <FooterEditor />
           </TabsContent>
         </Tabs>
       </div>

@@ -2,9 +2,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { useContent } from '@/context/content/ContentContext';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { content } = useContent();
+  const { companyDescription, copyright, socialLinks, menuGroups } = content.footer;
   
   return (
     <footer className="bg-gray-50 border-t border-gray-200">
@@ -16,22 +19,22 @@ const Footer = () => {
               <span className="text-xl font-bold">DenuncieAqui</span>
             </div>
             <p className="text-gray-600 mb-4">
-              Plataforma segura e eficiente para gestão de denúncias empresariais.
+              {companyDescription}
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-primary">
+              <a href={socialLinks.facebook} className="text-gray-400 hover:text-primary">
                 <Facebook size={20} />
                 <span className="sr-only">Facebook</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary">
+              <a href={socialLinks.twitter} className="text-gray-400 hover:text-primary">
                 <Twitter size={20} />
                 <span className="sr-only">Twitter</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary">
+              <a href={socialLinks.instagram} className="text-gray-400 hover:text-primary">
                 <Instagram size={20} />
                 <span className="sr-only">Instagram</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary">
+              <a href={socialLinks.linkedin} className="text-gray-400 hover:text-primary">
                 <Linkedin size={20} />
                 <span className="sr-only">LinkedIn</span>
               </a>
@@ -41,36 +44,39 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold text-lg mb-4">Produto</h3>
             <ul className="space-y-2">
-              <li><Link to="#features" className="text-gray-600 hover:text-primary">Recursos</Link></li>
-              <li><Link to="#pricing" className="text-gray-600 hover:text-primary">Preços</Link></li>
-              <li><Link to="#" className="text-gray-600 hover:text-primary">Casos de Uso</Link></li>
-              <li><Link to="#" className="text-gray-600 hover:text-primary">Depoimentos</Link></li>
+              {menuGroups.product.map((item) => (
+                <li key={item.id}>
+                  <Link to={item.url} className="text-gray-600 hover:text-primary">{item.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
           
           <div>
             <h3 className="font-semibold text-lg mb-4">Empresa</h3>
             <ul className="space-y-2">
-              <li><Link to="#" className="text-gray-600 hover:text-primary">Sobre Nós</Link></li>
-              <li><Link to="#" className="text-gray-600 hover:text-primary">Blog</Link></li>
-              <li><Link to="#" className="text-gray-600 hover:text-primary">Carreiras</Link></li>
-              <li><Link to="#" className="text-gray-600 hover:text-primary">Contato</Link></li>
+              {menuGroups.company.map((item) => (
+                <li key={item.id}>
+                  <Link to={item.url} className="text-gray-600 hover:text-primary">{item.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
           
           <div>
             <h3 className="font-semibold text-lg mb-4">Legal</h3>
             <ul className="space-y-2">
-              <li><Link to="#" className="text-gray-600 hover:text-primary">Termos de Serviço</Link></li>
-              <li><Link to="#" className="text-gray-600 hover:text-primary">Política de Privacidade</Link></li>
-              <li><Link to="#" className="text-gray-600 hover:text-primary">Política de Cookies</Link></li>
-              <li><Link to="#" className="text-gray-600 hover:text-primary">LGPD</Link></li>
+              {menuGroups.legal.map((item) => (
+                <li key={item.id}>
+                  <Link to={item.url} className="text-gray-600 hover:text-primary">{item.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
         
         <div className="border-t border-gray-200 mt-12 pt-8 text-center text-gray-500 text-sm">
-          <p>&copy; {currentYear} DenuncieAqui. Todos os direitos reservados.</p>
+          <p>{copyright}</p>
         </div>
       </div>
     </footer>
