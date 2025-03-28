@@ -1,6 +1,6 @@
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Building, FileText, Settings, Layout } from "lucide-react";
 
 interface AdminTabNavigationProps {
@@ -9,6 +9,7 @@ interface AdminTabNavigationProps {
 
 const AdminTabNavigation = ({ activeTab }: AdminTabNavigationProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleTabChange = (value: string) => {
     if (value === "companies") {

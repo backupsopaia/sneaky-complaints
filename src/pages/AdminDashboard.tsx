@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/auth/useAuth';
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -17,6 +17,9 @@ import NewCompanyDialog from '@/components/admin/NewCompanyDialog';
 const AdminDashboard = () => {
   const { user, isAuthenticated, isLoading, isSuperAdmin, getCompanies, createCompany, activateCompany, deactivateCompany } = useAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(tabParam || 'companies');
   const [companies, setCompanies] = useState<any[]>([]);
   const [showNewCompanyDialog, setShowNewCompanyDialog] = useState(false);
   const [newCompany, setNewCompany] = useState({
@@ -29,6 +32,15 @@ const AdminDashboard = () => {
       requiresAnonymity: true
     }
   });
+
+  // Update active tab when URL search params change
+  useEffect(() => {
+    if (tabParam) {
+      setActiveTab(tabParam);
+    } else {
+      setActiveTab('companies');
+    }
+  }, [tabParam]);
 
   useEffect(() => {
     if (isAuthenticated && isSuperAdmin) {
@@ -134,8 +146,8 @@ const AdminDashboard = () => {
       <div className="container mx-auto py-6 px-4">
         <AdminHeader user={user} />
 
-        <Tabs defaultValue="companies" className="space-y-6">
-          <AdminTabNavigation activeTab="companies" />
+        <Tabs value={activeTab} className="space-y-6">
+          <AdminTabNavigation activeTab={activeTab} />
 
           <TabsContent value="companies">
             <CompaniesTabContent
