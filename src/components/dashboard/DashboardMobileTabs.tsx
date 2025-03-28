@@ -20,7 +20,7 @@ const DashboardMobileTabs = ({ activeTab, onTabChange }: DashboardMobileTabsProp
   ];
   
   return (
-    <TabsList className="md:hidden mb-4 p-1 bg-muted/80 backdrop-blur-sm rounded-full">
+    <TabsList className="md:hidden mb-4 p-1 bg-muted/80 backdrop-blur-sm rounded-full sticky top-0 z-10 w-full">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         const Icon = tab.icon;
@@ -30,11 +30,11 @@ const DashboardMobileTabs = ({ activeTab, onTabChange }: DashboardMobileTabsProp
             key={tab.id} 
             value={tab.id}
             onClick={() => onTabChange(tab.id)}
-            className="relative px-4 py-2"
+            className="relative px-4 py-2 flex-1"
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
               <Icon size={18} />
-              <span>{tab.label}</span>
+              <span className="hidden sm:inline">{tab.label}</span>
             </div>
             
             {isActive && (

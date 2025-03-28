@@ -8,7 +8,7 @@ const MobileNavigation = () => {
   const location = useLocation();
   
   // Hide MobileNavigation on login and dashboard pages
-  if (location.pathname === '/login' || location.pathname === '/dashboard') {
+  if (location.pathname === '/login' || location.pathname === '/dashboard' || location.pathname === '/admin-dashboard') {
     return null;
   }
   
@@ -21,7 +21,7 @@ const MobileNavigation = () => {
 
   return (
     <motion.div 
-      className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 md:hidden"
+      className="fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border z-50 md:hidden"
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -40,9 +40,17 @@ const MobileNavigation = () => {
               <motion.div
                 className={`flex flex-col items-center justify-center ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
                 whileTap={{ scale: 0.9 }}
+                initial={false}
               >
                 <Icon size={20} />
                 <span className="text-xs mt-1">{item.label}</span>
+                {isActive && (
+                  <motion.div
+                    layoutId="navIndicator"
+                    className="absolute bottom-1 h-1 w-6 bg-primary rounded-full"
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
               </motion.div>
             </Link>
           );
