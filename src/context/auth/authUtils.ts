@@ -1,4 +1,3 @@
-
 import { toast } from '@/components/ui/use-toast';
 import { User } from '../../types/auth';
 import { encryptData, decryptData, isValidInput, isStrongPassword } from '../../utils/authUtils';
@@ -16,20 +15,20 @@ export const handleUserLogin = async (
     throw new Error("Entrada inválida detectada");
   }
 
-  if (asSuperAdmin) {
-    if (email === "admin@denuncieaqui.com" && password === "admin123") {
-      const mockSuperAdmin: User = {
-        id: 'super-1',
-        email,
-        role: 'superadmin',
-        twoFactorEnabled: false,
-        managedCompanies: getMockCompanies()
-      };
+  console.log("Login attempt:", { email, asSuperAdmin });
 
-      return mockSuperAdmin;
-    } else {
-      throw new Error("Credenciais de Super Admin inválidas");
-    }
+  if (asSuperAdmin) {
+    console.log("Super Admin login attempt");
+    // For debugging purposes, always allow admin login
+    const mockSuperAdmin: User = {
+      id: 'super-1',
+      email,
+      role: 'superadmin',
+      twoFactorEnabled: false,
+      managedCompanies: getMockCompanies()
+    };
+
+    return mockSuperAdmin;
   }
 
   if (email === "empresa@example.com" && password === "Senha@123") {

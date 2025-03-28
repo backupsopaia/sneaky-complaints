@@ -20,6 +20,8 @@ const Login = () => {
 
   const handleLogin = async (data: any) => {
     try {
+      console.log("Login attempt with:", data, "Type:", loginType);
+      
       setLoginData({ 
         email: data.email, 
         password: data.password,
@@ -28,7 +30,10 @@ const Login = () => {
       
       // Skip the 2FA verification since it's disabled
       // Pass null for the token since we're not using 2FA
-      await login(data.email, data.password, null, loginType === 'admin');
+      const isSuperAdmin = loginType === 'admin';
+      console.log("Is Super Admin?", isSuperAdmin);
+      
+      await login(data.email, data.password, null, isSuperAdmin);
       
       completeLogin();
     } catch (error) {
