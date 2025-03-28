@@ -1,47 +1,17 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/context/AuthContext';
 import { Shield, LogOut, Settings, BarChart3, Users, FileText, Bell, MessageSquare, User } from "lucide-react";
-
-const mockReports = [
-  {
-    id: '1',
-    date: '2023-05-15',
-    category: 'Assédio Moral',
-    status: 'Em Análise',
-    anonymous: true
-  },
-  {
-    id: '2',
-    date: '2023-05-10',
-    category: 'Fraude',
-    status: 'Investigação',
-    anonymous: false
-  },
-  {
-    id: '3',
-    date: '2023-05-02',
-    category: 'Conflito de Interesses',
-    status: 'Concluído',
-    anonymous: true
-  }
-];
+import ReportsList from '@/components/dashboard/ReportsList';
+import ReportsStats from '@/components/dashboard/ReportsStats';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -61,6 +31,10 @@ const Dashboard = () => {
       description: "Você saiu da sua conta.",
     });
     navigate('/');
+  };
+
+  const handleCreateReport = () => {
+    navigate('/report');
   };
 
   return (
@@ -163,191 +137,31 @@ const Dashboard = () => {
             </TabsList>
             
             <TabsContent value="overview">
-              <h1 className="text-2xl font-bold mb-6">Visão Geral</h1>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-500">Total de Denúncias</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">3</div>
-                    <p className="text-xs text-gray-500 mt-1">+2 novas este mês</p>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-500">Em Análise</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">1</div>
-                    <p className="text-xs text-gray-500 mt-1">Tempo médio: 5 dias</p>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-500">Resolvidas</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">1</div>
-                    <p className="text-xs text-gray-500 mt-1">33% do total</p>
-                  </CardContent>
-                </Card>
+              <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold">Visão Geral</h1>
+                <Button onClick={handleCreateReport}>
+                  Nova Denúncia
+                </Button>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Últimas Denúncias</CardTitle>
-                    <CardDescription>Acompanhe as denúncias mais recentes</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {mockReports.map(report => (
-                        <div key={report.id} className="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
-                          <div className="flex justify-between items-start mb-1">
-                            <div className="font-medium flex items-center gap-2">
-                              #{report.id} 
-                              {report.anonymous && (
-                                <span className="bg-gray-100 text-gray-800 text-xs px-2 py-0.5 rounded">
-                                  Anônimo
-                                </span>
-                              )}
-                            </div>
-                            <span className={`text-xs px-2 py-0.5 rounded ${
-                              report.status === 'Em Análise' 
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : report.status === 'Investigação'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-green-100 text-green-800'
-                            }`}>
-                              {report.status}
-                            </span>
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {report.category} • {report.date}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Configuração do Canal</CardTitle>
-                    <CardDescription>Ajuste seu canal de denúncias</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="font-medium">Link Personalizado</p>
-                          <p className="text-sm text-gray-500">denuncieaqui.com/c/{user.companyName?.toLowerCase().replace(/\s+/g, '-')}</p>
-                        </div>
-                        <Button variant="outline" size="sm">Copiar</Button>
-                      </div>
-                      
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="font-medium">Logotipo da Empresa</p>
-                          <p className="text-sm text-gray-500">Personalizar aparência</p>
-                        </div>
-                        <Button variant="outline" size="sm">Editar</Button>
-                      </div>
-                      
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="font-medium">Categorias de Denúncias</p>
-                          <p className="text-sm text-gray-500">Definir categorias para classificação</p>
-                        </div>
-                        <Button variant="outline" size="sm">Configurar</Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+              <div className="grid grid-cols-1 gap-6 mb-6">
+                <ReportsStats />
+              </div>
+              
+              <div className="grid grid-cols-1 gap-6">
+                <ReportsList />
               </div>
             </TabsContent>
             
             <TabsContent value="reports">
-              <h1 className="text-2xl font-bold mb-6">Denúncias</h1>
+              <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold">Denúncias</h1>
+                <Button onClick={handleCreateReport}>
+                  Nova Denúncia
+                </Button>
+              </div>
               
-              <Card>
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <CardTitle>Todas as Denúncias</CardTitle>
-                      <CardDescription>Gerencie e acompanhe as denúncias recebidas</CardDescription>
-                    </div>
-                    <Button variant="outline" size="sm">Exportar</Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="rounded-md border">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Protocolo
-                          </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Data
-                          </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Categoria
-                          </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status
-                          </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Tipo
-                          </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Ações
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {mockReports.map((report) => (
-                          <tr key={report.id}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              #{report.id}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {report.date}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {report.category}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                              <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                report.status === 'Em Análise' 
-                                  ? 'bg-yellow-100 text-yellow-800'
-                                  : report.status === 'Investigação'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-green-100 text-green-800'
-                              }`}>
-                                {report.status}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {report.anonymous ? 'Anônimo' : 'Identificado'}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              <Button variant="ghost" size="sm">
-                                <MessageSquare size={16} className="mr-1" />
-                                <span>Responder</span>
-                              </Button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
+              <ReportsList />
             </TabsContent>
             
             <TabsContent value="settings">
