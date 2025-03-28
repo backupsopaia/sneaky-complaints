@@ -10,23 +10,12 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, FileEdit, Eye } from "lucide-react";
-import RichTextEditor from '@/components/admin/content/RichTextEditor';
-
-interface EmailTemplate {
-  id: string;
-  name: string;
-  subject: string;
-  content: string;
-}
-
-interface EmailTemplateEditorProps {
-  templates?: EmailTemplate[];
-  onSave?: (template: EmailTemplate) => void;
-}
+import TemplateSelector from './TemplateSelector';
+import TemplateForm from './TemplateForm';
+import TemplatePreview from './TemplatePreview';
+import { EmailTemplate } from './types';
 
 const defaultTemplates: EmailTemplate[] = [
   {
@@ -79,7 +68,15 @@ const defaultTemplates: EmailTemplate[] = [
   }
 ];
 
-const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({ templates = defaultTemplates, onSave }) => {
+interface EmailTemplateEditorProps {
+  templates?: EmailTemplate[];
+  onSave?: (template: EmailTemplate) => void;
+}
+
+const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({ 
+  templates = defaultTemplates, 
+  onSave 
+}) => {
   const { toast } = useToast();
   const [activeTemplateId, setActiveTemplateId] = useState(templates[0]?.id || '');
   const [currentView, setCurrentView] = useState<'edit' | 'preview'>('edit');
@@ -108,20 +105,6 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({ templates = d
     });
   };
 
-  const renderPlaceholderHelp = () => (
-    <div className="bg-gray-50 border border-gray-100 rounded-md p-4 mt-4">
-      <h4 className="text-sm font-medium mb-2">Variáveis disponíveis:</h4>
-      <ul className="text-sm space-y-1">
-        <li><code>{'{{name}}'}</code> - Nome do destinatário</li>
-        <li><code>{'{{trackingCode}}'}</code> - Código de rastreamento da denúncia</li>
-        <li><code>{'{{submissionDate}}'}</code> - Data de submissão</li>
-        <li><code>{'{{newStatus}}'}</code> - Novo status da denúncia</li>
-        <li><code>{'{{comments}}'}</code> - Comentários adicionais</li>
-        <li><code>{'{{loginUrl}}'}</code> - URL de login</li>
-      </ul>
-    </div>
-  );
-
   return (
     <Card>
       <CardHeader>
@@ -137,21 +120,11 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({ templates = d
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div>
-            <Label>Selecione o Template</Label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
-              {templates.map((template) => (
-                <Button
-                  key={template.id}
-                  variant={activeTemplateId === template.id ? "default" : "outline"}
-                  className="justify-start"
-                  onClick={() => handleTemplateChange(template.id)}
-                >
-                  {template.name}
-                </Button>
-              ))}
-            </div>
-          </div>
+          <TemplateSelector
+            templates={templates}
+            activeTemplateId={activeTemplateId}
+            onTemplateChange={handleTemplateChange}
+          />
 
           <Tabs value={currentView} onValueChange={(v) => setCurrentView(v as 'edit' | 'preview')}>
             <div className="flex justify-between items-center">
@@ -169,35 +142,14 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({ templates = d
             </div>
 
             <TabsContent value="edit" className="space-y-4 pt-4">
-              <div className="space-y-2">
-                <Label htmlFor="subject">Assunto do Email</Label>
-                <Input
-                  id="subject"
-                  value={editedTemplate.subject}
-                  onChange={(e) => handleInputChange('subject', e.target.value)}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="content">Conteúdo HTML do Email</Label>
-                <RichTextEditor 
-                  initialValue={editedTemplate.content}
-                  onChange={(value) => handleInputChange('content', value)}
-                />
-              </div>
-              
-              {renderPlaceholderHelp()}
+              <TemplateForm 
+                template={editedTemplate} 
+                onInputChange={handleInputChange} 
+              />
             </TabsContent>
             
             <TabsContent value="preview" className="pt-4">
-              <div className="space-y-4">
-                <div className="bg-gray-50 border p-3 rounded-md">
-                  <strong>Assunto:</strong> {editedTemplate.subject}
-                </div>
-                <div className="border rounded-md p-4 bg-white">
-                  <div dangerouslySetInnerHTML={{ __html: editedTemplate.content }} />
-                </div>
-              </div>
+              <TemplatePreview template={editedTemplate} />
             </TabsContent>
           </Tabs>
         </div>
