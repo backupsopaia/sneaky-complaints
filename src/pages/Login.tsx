@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
@@ -8,7 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Shield, Building, Info } from "lucide-react";
+import { Shield, Building, Info, AlertTriangle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -34,11 +33,9 @@ const Login = () => {
       });
       
       try {
-        // First attempt without 2FA token
         await login(data.email, data.password, undefined, loginType === 'admin');
         completeLogin();
       } catch (error: any) {
-        // If 2FA is required
         if (error.message === "Autenticação de dois fatores necessária") {
           setShowTwoFactor(true);
         } else {
@@ -74,7 +71,6 @@ const Login = () => {
       description: "Você foi autenticado com sucesso.",
     });
     
-    // Redirect based on user type
     if (loginType === 'admin') {
       navigate('/admin-dashboard');
     } else {
@@ -83,7 +79,6 @@ const Login = () => {
   };
 
   const fillCompanyCredentials = () => {
-    // Auto-fill demo credentials (for company access)
     const demoForm = document.getElementById('company-login-form');
     if (demoForm) {
       const emailInput = demoForm.querySelector('input[name="email"]') as HTMLInputElement;
@@ -93,7 +88,6 @@ const Login = () => {
         emailInput.value = 'empresa@example.com';
         passwordInput.value = 'Senha@123';
         
-        // Update form data
         const event = new Event('change', { bubbles: true });
         emailInput.dispatchEvent(event);
         passwordInput.dispatchEvent(event);
@@ -102,7 +96,6 @@ const Login = () => {
   };
 
   const fillAdminCredentials = () => {
-    // Auto-fill admin credentials (for super admin access)
     const adminForm = document.getElementById('admin-login-form');
     if (adminForm) {
       const emailInput = adminForm.querySelector('input[name="email"]') as HTMLInputElement;
@@ -112,12 +105,16 @@ const Login = () => {
         emailInput.value = 'admin@denuncieaqui.com';
         passwordInput.value = 'admin123';
         
-        // Update form data
         const event = new Event('change', { bubbles: true });
         emailInput.dispatchEvent(event);
         passwordInput.dispatchEvent(event);
       }
     }
+  };
+
+  const generateRandomCode = () => {
+    const randomCode = Math.floor(100000 + Math.random() * 900000).toString();
+    setTwoFactorCode(randomCode);
   };
 
   return (
@@ -207,13 +204,17 @@ const Login = () => {
               </DialogTitle>
               <DialogDescription>
                 Digite o código de 6 dígitos do seu aplicativo autenticador.
-                <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-sm">
-                  <strong>Dica:</strong> Para este demo, qualquer código de 6 dígitos é aceito.
-                </div>
               </DialogDescription>
             </DialogHeader>
             
             <div className="flex flex-col items-center justify-center gap-4 py-4">
+              <Alert variant="default" className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+                <AlertTriangle className="h-4 w-4 text-blue-500" />
+                <AlertDescription className="text-blue-700 dark:text-blue-300">
+                  <strong>Demonstração:</strong> Qualquer código de 6 dígitos será aceito.
+                </AlertDescription>
+              </Alert>
+              
               <InputOTP maxLength={6} value={twoFactorCode} onChange={setTwoFactorCode}>
                 <InputOTPGroup>
                   <InputOTPSlot index={0} />
@@ -225,13 +226,23 @@ const Login = () => {
                 </InputOTPGroup>
               </InputOTP>
               
-              <Button 
-                onClick={handleTwoFactorSubmit}
-                disabled={twoFactorCode.length !== 6}
-                className="w-full mt-4"
-              >
-                Verificar
-              </Button>
+              <div className="flex w-full gap-2 mt-2">
+                <Button 
+                  variant="outline" 
+                  onClick={generateRandomCode}
+                  className="flex-1"
+                >
+                  Gerar código aleatório
+                </Button>
+                
+                <Button 
+                  onClick={handleTwoFactorSubmit}
+                  disabled={twoFactorCode.length !== 6}
+                  className="flex-1"
+                >
+                  Verificar
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>
