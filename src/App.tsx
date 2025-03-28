@@ -25,12 +25,8 @@ const AnimatedRoutes = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   
-  // Determine if bottom navigation should be shown
-  // Hide it on the dashboard page as it has its own navigation
-  const showBottomNav = !['/dashboard'].includes(location.pathname);
-  
   // Determine if footer should be shown (hide on mobile)
-  const showFooter = !isMobile && !['/dashboard'].includes(location.pathname);
+  const showFooter = !isMobile && !['/dashboard', '/login'].includes(location.pathname);
   
   return (
     <>
@@ -41,7 +37,7 @@ const AnimatedRoutes = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 5 }}
           transition={{ duration: 0.2 }}
-          className={showBottomNav ? 'has-bottom-nav pb-16 md:pb-0' : ''}
+          className={location.pathname !== '/login' && location.pathname !== '/dashboard' ? 'has-bottom-nav pb-16 md:pb-0' : ''}
         >
           <Routes location={location}>
             <Route path="/" element={<Index />} />
@@ -59,7 +55,7 @@ const AnimatedRoutes = () => {
         </motion.div>
       </AnimatePresence>
       
-      {showBottomNav && <MobileNavigation />}
+      <MobileNavigation />
     </>
   );
 };

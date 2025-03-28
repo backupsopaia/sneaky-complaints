@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 const MobileNavigation = () => {
   const location = useLocation();
   
-  // Escondemos o MobileNavigation na página de login e dashboard
+  // Hide MobileNavigation on login and dashboard pages
   if (location.pathname === '/login' || location.pathname === '/dashboard') {
     return null;
   }
