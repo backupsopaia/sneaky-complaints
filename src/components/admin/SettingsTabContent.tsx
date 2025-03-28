@@ -229,7 +229,7 @@ const SettingsTabContent = ({ user }: SettingsTabContentProps) => {
                 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Logs de Atividade</Label>
+                    <Label>Registos de Atividade</Label>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Regista todas as ações de administradores
                     </p>
@@ -239,9 +239,9 @@ const SettingsTabContent = ({ user }: SettingsTabContentProps) => {
                 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Backups Automáticos</Label>
+                    <Label>Cópias de Segurança Automáticas</Label>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Realiza backups diários da plataforma
+                      Realiza cópias de segurança diárias da plataforma
                     </p>
                   </div>
                   <Switch checked={true} />
