@@ -7,6 +7,11 @@ import { motion } from "framer-motion";
 const MobileNavigation = () => {
   const location = useLocation();
   
+  // Escondemos o MobileNavigation na página de login e dashboard
+  if (location.pathname === '/login' || location.pathname === '/dashboard') {
+    return null;
+  }
+  
   const navItems = [
     { icon: Home, label: "Início", path: "/" },
     { icon: FileText, label: "Denunciar", path: "/report" },

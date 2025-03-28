@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { AnimatePresence, motion } from "framer-motion";
+import { useIsMobile } from "./hooks/use-mobile";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -15,16 +16,21 @@ import ReportDetails from "./pages/ReportDetails";
 import CheckStatus from "./pages/CheckStatus";
 import NotFound from "./pages/NotFound";
 import MobileNavigation from "./components/MobileNavigation";
+import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
 
 // Componente de wrapper para animações de página
 const AnimatedRoutes = () => {
   const location = useLocation();
+  const isMobile = useIsMobile();
   
   // Determine if bottom navigation should be shown
   // Hide it on the dashboard page as it has its own navigation
   const showBottomNav = !['/dashboard'].includes(location.pathname);
+  
+  // Determine if footer should be shown (hide on mobile)
+  const showFooter = !isMobile && !['/dashboard'].includes(location.pathname);
   
   return (
     <>
@@ -35,7 +41,7 @@ const AnimatedRoutes = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 5 }}
           transition={{ duration: 0.2 }}
-          className={showBottomNav ? 'has-bottom-nav' : ''}
+          className={showBottomNav ? 'has-bottom-nav pb-16 md:pb-0' : ''}
         >
           <Routes location={location}>
             <Route path="/" element={<Index />} />
@@ -48,6 +54,8 @@ const AnimatedRoutes = () => {
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+
+          {showFooter && <Footer />}
         </motion.div>
       </AnimatePresence>
       

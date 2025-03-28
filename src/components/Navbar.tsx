@@ -1,19 +1,25 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Shield, Menu, X } from "lucide-react";
+import { Shield, Menu, X, FileText, User, Home } from "lucide-react";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
   const isMobile = useIsMobile();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  // Não mostrar a Navbar no dashboard
+  if (location.pathname === '/dashboard') {
+    return null;
+  }
 
   return (
     <header className="border-b border-border bg-background/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50">
@@ -47,21 +53,32 @@ const Navbar = () => {
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >
                     <nav className="flex flex-col space-y-4">
-                      <Link to="/" className="text-sm font-medium hover:text-primary touch-action" onClick={() => setIsMenuOpen(false)}>
-                        Início
+                      <Link to="/" className="text-sm font-medium hover:text-primary touch-action flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                        <Home size={18} />
+                        <span>Início</span>
                       </Link>
-                      <Link to="#features" className="text-sm font-medium hover:text-primary touch-action" onClick={() => setIsMenuOpen(false)}>
-                        Recursos
+                      <Link to="#features" className="text-sm font-medium hover:text-primary touch-action flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                        <Shield size={18} />
+                        <span>Recursos</span>
                       </Link>
-                      <Link to="#pricing" className="text-sm font-medium hover:text-primary touch-action" onClick={() => setIsMenuOpen(false)}>
-                        Preços
+                      <Link to="#pricing" className="text-sm font-medium hover:text-primary touch-action flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                        <FileText size={18} />
+                        <span>Preços</span>
                       </Link>
-                      <Link to="/report" className="text-sm font-medium hover:text-primary touch-action" onClick={() => setIsMenuOpen(false)}>
-                        Fazer Denúncia
+                      <Link to="/report" className="text-sm font-medium hover:text-primary touch-action flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                        <FileText size={18} />
+                        <span>Fazer Denúncia</span>
+                      </Link>
+                      <Link to="/check-status" className="text-sm font-medium hover:text-primary touch-action flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                        <Shield size={18} />
+                        <span>Verificar Status</span>
                       </Link>
                       <div className="pt-2 flex flex-col space-y-2">
                         <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                          <Button variant="outline" className="w-full">Entrar</Button>
+                          <Button variant="outline" className="w-full flex items-center gap-2">
+                            <User size={18} />
+                            <span>Entrar</span>
+                          </Button>
                         </Link>
                         <Link to="/register" onClick={() => setIsMenuOpen(false)}>
                           <Button className="w-full">Registrar Empresa</Button>
@@ -86,6 +103,9 @@ const Navbar = () => {
                 </Link>
                 <Link to="/report" className="text-sm font-medium hover:text-primary">
                   Fazer Denúncia
+                </Link>
+                <Link to="/check-status" className="text-sm font-medium hover:text-primary">
+                  Verificar Status
                 </Link>
               </nav>
               <div className="hidden md:flex gap-2">

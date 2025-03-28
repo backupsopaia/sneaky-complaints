@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
 import AuthForm from '@/components/AuthForm';
 import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import { useAuth } from '@/context/AuthContext';
 
 const Login = () => {
@@ -36,8 +35,6 @@ const Login = () => {
       <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <AuthForm type="login" onSubmit={handleLogin} />
       </div>
-      
-      <Footer />
     </div>
   );
 };
