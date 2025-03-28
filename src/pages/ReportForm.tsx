@@ -7,6 +7,8 @@ import Footer from '@/components/Footer';
 import CompanyVerification from '@/components/report/CompanyVerification';
 import ReportHeader from '@/components/report/ReportHeader';
 import ReportFormContent from '@/components/report/ReportFormContent';
+import TrackingCodeDisplay from '@/components/report/TrackingCodeDisplay';
+import { generateTrackingCode } from '@/utils/trackingCode';
 
 const ReportForm = () => {
   const navigate = useNavigate();
@@ -14,6 +16,9 @@ const ReportForm = () => {
   const [isAnonymous, setIsAnonymous] = useState(true);
   const [companyCode, setCompanyCode] = useState('');
   const [companyVerified, setCompanyVerified] = useState(false);
+  const [submissionComplete, setSubmissionComplete] = useState(false);
+  const [trackingCode, setTrackingCode] = useState('');
+  
   const [reportData, setReportData] = useState({
     name: '',
     email: '',
@@ -25,6 +30,7 @@ const ReportForm = () => {
     involvedPeople: '',
     hasEvidence: false,
     evidenceDescription: '',
+    files: [] as File[],
     acceptTerms: false
   });
 
@@ -47,6 +53,13 @@ const ReportForm = () => {
     setReportData({
       ...reportData,
       [name]: value
+    });
+  };
+  
+  const handleFileChange = (files: File[]) => {
+    setReportData({
+      ...reportData,
+      files
     });
   };
 
@@ -88,16 +101,41 @@ const ReportForm = () => {
       return;
     }
     
-    // In a real application, this would send the report to the backend
-    toast({
-      title: "Denúncia enviada",
-      description: "Seu protocolo é #4872. Guarde este número para acompanhar o status.",
+    // Check if required fields are filled
+    if (!reportData.category || !reportData.description) {
+      toast({
+        variant: "destructive",
+        title: "Campos obrigatórios",
+        description: "Por favor, preencha todos os campos obrigatórios.",
+      });
+      return;
+    }
+    
+    // Generate a unique tracking code
+    const newTrackingCode = generateTrackingCode();
+    setTrackingCode(newTrackingCode);
+    
+    // In a real application, this would send the report data to the backend
+    console.log("Report data to be submitted:", {
+      isAnonymous,
+      companyCode,
+      ...reportData,
+      trackingCode: newTrackingCode
     });
     
-    // Redirect to confirmation page
-    setTimeout(() => {
-      navigate('/');
-    }, 2000);
+    // Show success toast and tracking code
+    toast({
+      title: "Denúncia enviada",
+      description: `Seu protocolo é ${newTrackingCode}. Guarde este número para acompanhar o status.`,
+    });
+    
+    // Set submission as complete to show the tracking code display
+    setSubmissionComplete(true);
+  };
+  
+  const handleDone = () => {
+    // Reset form and navigate back to home
+    navigate('/');
   };
 
   return (
@@ -108,7 +146,9 @@ const ReportForm = () => {
         <div className="container px-4 mx-auto max-w-3xl">
           <ReportHeader />
           
-          {!companyVerified ? (
+          {submissionComplete ? (
+            <TrackingCodeDisplay trackingCode={trackingCode} onDone={handleDone} />
+          ) : !companyVerified ? (
             <CompanyVerification 
               companyCode={companyCode}
               setCompanyCode={setCompanyCode}
@@ -122,6 +162,7 @@ const ReportForm = () => {
               handleInputChange={handleInputChange}
               handleCheckboxChange={handleCheckboxChange}
               handleSelectChange={handleSelectChange}
+              handleFileChange={handleFileChange}
               handleSubmit={handleSubmit}
             />
           )}

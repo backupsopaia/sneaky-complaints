@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FileUploader } from './FileUploader';
 
 interface ReportDetailsSectionProps {
   reportData: {
@@ -15,18 +16,21 @@ interface ReportDetailsSectionProps {
     involvedPeople: string;
     hasEvidence: boolean;
     evidenceDescription: string;
+    files: File[];
     [key: string]: any;
   };
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleCheckboxChange: (name: string, checked: boolean) => void;
   handleSelectChange: (name: string, value: string) => void;
+  handleFileChange: (files: File[]) => void;
 }
 
 const ReportDetailsSection = ({
   reportData,
   handleInputChange,
   handleCheckboxChange,
-  handleSelectChange
+  handleSelectChange,
+  handleFileChange
 }: ReportDetailsSectionProps) => {
   return (
     <div className="mb-6 space-y-4">
@@ -36,6 +40,7 @@ const ReportDetailsSection = ({
         <Label htmlFor="category">Categoria</Label>
         <Select 
           onValueChange={(value) => handleSelectChange('category', value)}
+          value={reportData.category}
         >
           <SelectTrigger id="category">
             <SelectValue placeholder="Selecione uma categoria" />
@@ -113,18 +118,28 @@ const ReportDetailsSection = ({
         </div>
         
         {reportData.hasEvidence && (
-          <div>
-            <Label htmlFor="evidenceDescription">Descreva as Evidências</Label>
-            <Textarea
-              id="evidenceDescription"
-              name="evidenceDescription"
-              placeholder="Descreva quais evidências você possui (documentos, e-mails, fotos, etc.)"
-              value={reportData.evidenceDescription}
-              onChange={handleInputChange}
-            />
-            <p className="text-sm text-gray-500 mt-1">
-              Não anexe arquivos neste momento. Se necessário, a empresa entrará em contato posteriormente para obter as evidências.
-            </p>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="evidenceDescription">Descreva as Evidências</Label>
+              <Textarea
+                id="evidenceDescription"
+                name="evidenceDescription"
+                placeholder="Descreva quais evidências você possui (documentos, e-mails, fotos, etc.)"
+                value={reportData.evidenceDescription}
+                onChange={handleInputChange}
+              />
+            </div>
+            
+            <div>
+              <Label>Upload de Evidências</Label>
+              <FileUploader 
+                onFilesSelected={handleFileChange}
+                currentFiles={reportData.files}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Formatos aceitos: PDF, JPG, PNG, MP3, MP4 (máx. 10MB por arquivo)
+              </p>
+            </div>
           </div>
         )}
       </div>

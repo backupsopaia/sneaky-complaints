@@ -21,12 +21,14 @@ interface ReportFormContentProps {
     involvedPeople: string;
     hasEvidence: boolean;
     evidenceDescription: string;
+    files: File[];
     acceptTerms: boolean;
     [key: string]: any;
   };
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleCheckboxChange: (name: string, checked: boolean) => void;
   handleSelectChange: (name: string, value: string) => void;
+  handleFileChange: (files: File[]) => void;
   handleSubmit: (e: React.FormEvent) => void;
 }
 
@@ -37,6 +39,7 @@ const ReportFormContent = ({
   handleInputChange,
   handleCheckboxChange,
   handleSelectChange,
+  handleFileChange,
   handleSubmit
 }: ReportFormContentProps) => {
   return (
@@ -53,6 +56,7 @@ const ReportFormContent = ({
         handleInputChange={handleInputChange}
         handleCheckboxChange={handleCheckboxChange}
         handleSelectChange={handleSelectChange}
+        handleFileChange={handleFileChange}
       />
       
       <div className="mb-8">
