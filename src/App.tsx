@@ -25,7 +25,7 @@ const AnimatedRoutes = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   
-  // Determine if footer should be shown (hide on mobile)
+  // Determine if footer should be shown (hide on login, dashboard, and on mobile)
   const showFooter = !isMobile && !['/dashboard', '/login'].includes(location.pathname);
   
   return (
@@ -37,7 +37,7 @@ const AnimatedRoutes = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 5 }}
           transition={{ duration: 0.2 }}
-          className={location.pathname !== '/login' && location.pathname !== '/dashboard' ? 'has-bottom-nav pb-16 md:pb-0' : ''}
+          className={!['/login', '/dashboard'].includes(location.pathname) ? 'has-bottom-nav pb-16 md:pb-0' : ''}
         >
           <Routes location={location}>
             <Route path="/" element={<Index />} />
