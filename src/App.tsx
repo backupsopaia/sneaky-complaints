@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { useIsMobile } from "./hooks/use-mobile";
+import { useEffect } from "react";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -27,6 +28,18 @@ const AnimatedRoutes = () => {
   
   // Determine if footer should be shown (hide on login, dashboard, and on mobile)
   const showFooter = !isMobile && !['/dashboard', '/login'].includes(location.pathname);
+  
+  // Apply stored theme on initial load
+  useEffect(() => {
+    const theme = localStorage.getItem('theme') || 
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
   
   return (
     <>

@@ -3,8 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 
 const ThemeToggle = () => {
+  const { toast } = useToast();
   const [theme, setTheme] = useState<'light' | 'dark'>(
     localStorage.getItem('theme') as 'light' | 'dark' || 
     (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
@@ -23,7 +25,13 @@ const ThemeToggle = () => {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    toast({
+      title: `Modo ${newTheme === 'dark' ? 'escuro' : 'claro'} ativado`,
+      description: `Aparência do app alterada para modo ${newTheme === 'dark' ? 'escuro' : 'claro'}.`,
+      duration: 2000,
+    });
   };
 
   return (
@@ -31,7 +39,7 @@ const ThemeToggle = () => {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="rounded-full"
+      className="rounded-full transition-colors hover:bg-muted"
     >
       <motion.div
         initial={{ scale: 0.8, rotate: 0 }}
