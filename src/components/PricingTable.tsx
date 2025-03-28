@@ -64,7 +64,7 @@ const PricingTable = () => {
             <h3 className="text-xl font-semibold mb-2">Profissional</h3>
             <p className="text-gray-600 mb-6">Para empresas em crescimento que precisam de mais recursos.</p>
             <div className="flex items-baseline mb-4">
-              <span className="text-3xl font-bold">R$299</span>
+              <span className="text-3xl font-bold">20.000 Kz</span>
               <span className="text-gray-500 ml-2">/mês</span>
             </div>
           </div>
