@@ -12,6 +12,7 @@ import ImageUploader from '@/components/admin/content/ImageUploader';
 import RichTextEditor from '@/components/admin/content/RichTextEditor';
 import ContentNavigation from '@/components/admin/content/ContentNavigation';
 import { useContent } from '@/context/content/ContentContext';
+import { ContentSection } from '@/context/content/ContentContext';
 
 interface ContentEditorProps {
   section: string;
@@ -22,7 +23,11 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
   const { content, updateContent } = useContent();
   const [activeTab, setActiveTab] = useState("text");
   const [saving, setSaving] = useState(false);
-  const [localContent, setLocalContent] = useState(content[section as keyof typeof content]);
+  
+  // Explicitly type the localContent based on section type
+  const [localContent, setLocalContent] = useState<ContentSection>(
+    content[section as 'homepage' | 'login' | 'dashboard'] as ContentSection
+  );
 
   const handleSave = () => {
     setSaving(true);
