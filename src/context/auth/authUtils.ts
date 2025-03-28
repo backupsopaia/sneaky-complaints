@@ -1,4 +1,3 @@
-
 import { toast } from '@/components/ui/use-toast';
 import { User } from '../../types/auth';
 import { encryptData, decryptData, isValidInput, isStrongPassword } from '../../utils/authUtils';
@@ -22,13 +21,9 @@ export const handleUserLogin = async (
         id: 'super-1',
         email,
         role: 'superadmin',
-        twoFactorEnabled: true,
+        twoFactorEnabled: false,
         managedCompanies: getMockCompanies()
       };
-
-      if (mockSuperAdmin.twoFactorEnabled && !token) {
-        throw new Error("Autenticação de dois fatores necessária");
-      }
 
       return mockSuperAdmin;
     } else {
@@ -43,12 +38,8 @@ export const handleUserLogin = async (
       companyName: 'Empresa Demonstração',
       role: 'admin',
       plan: 'pro',
-      twoFactorEnabled: true
+      twoFactorEnabled: false
     };
-
-    if (mockUser.twoFactorEnabled && !token) {
-      throw new Error("Autenticação de dois fatores necessária");
-    }
 
     return mockUser;
   }
@@ -59,12 +50,8 @@ export const handleUserLogin = async (
     companyName: 'Empresa Demonstração',
     role: 'admin',
     plan: 'pro',
-    twoFactorEnabled: true
+    twoFactorEnabled: false
   };
-
-  if (mockUser.twoFactorEnabled && !token) {
-    throw new Error("Autenticação de dois fatores necessária");
-  }
 
   return mockUser;
 };

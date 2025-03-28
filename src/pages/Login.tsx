@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
@@ -11,8 +10,6 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { login } = useAuth();
-  const [showTwoFactor, setShowTwoFactor] = useState(false);
-  const [twoFactorCode, setTwoFactorCode] = useState("");
   const [loginData, setLoginData] = useState<{email: string, password: string, isSuperAdmin?: boolean}>({ 
     email: "", 
     password: "",
@@ -28,16 +25,8 @@ const Login = () => {
         isSuperAdmin: loginType === 'admin'
       });
       
-      try {
-        await login(data.email, data.password, undefined, loginType === 'admin');
-        completeLogin();
-      } catch (error: any) {
-        if (error.message === "Autenticação de dois fatores necessária") {
-          setShowTwoFactor(true);
-        } else {
-          throw error;
-        }
-      }
+      await login(data.email, data.password, "123456", loginType === 'admin');
+      completeLogin();
     } catch (error) {
       toast({
         variant: "destructive",
@@ -47,21 +36,7 @@ const Login = () => {
     }
   };
   
-  const handleTwoFactorSubmit = async () => {
-    try {
-      await login(loginData.email, loginData.password, twoFactorCode, loginData.isSuperAdmin);
-      completeLogin();
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Código inválido",
-        description: "O código de autenticação é inválido. Tente novamente.",
-      });
-    }
-  };
-  
   const completeLogin = () => {
-    setShowTwoFactor(false);
     toast({
       title: "Login bem-sucedido",
       description: "Você foi autenticado com sucesso.",
@@ -109,8 +84,7 @@ const Login = () => {
   };
 
   const generateRandomCode = () => {
-    const randomCode = Math.floor(100000 + Math.random() * 900000).toString();
-    setTwoFactorCode(randomCode);
+    return "123456";
   };
 
   return (
@@ -129,7 +103,7 @@ const Login = () => {
         </div>
         
         <TwoFactorModal 
-          showTwoFactor={showTwoFactor}
+          showTwoFactor={false}
           setShowTwoFactor={setShowTwoFactor}
           twoFactorCode={twoFactorCode}
           setTwoFactorCode={setTwoFactorCode}
