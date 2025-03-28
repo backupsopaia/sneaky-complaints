@@ -83,6 +83,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
+      // Regular company login flow - add the demo company credentials
+      if (email === "empresa@example.com" && password === "Senha@123") {
+        const mockUser: User = {
+          id: '1',
+          email,
+          companyName: 'Empresa Demonstração',
+          role: 'admin',
+          plan: 'pro',
+          twoFactorEnabled: true
+        };
+
+        if (mockUser.twoFactorEnabled && !token) {
+          setIsLoading(false);
+          throw new Error("Autenticação de dois fatores necessária");
+        }
+
+        const encryptedUserData = encryptData(JSON.stringify(mockUser));
+        localStorage.setItem('encrypted_user', encryptedUserData);
+        localStorage.setItem('session_start_time', Date.now().toString());
+
+        console.log(`[LGPD/GDPR Log] User login: ${Date.now()}`);
+        setUser(mockUser);
+        setIsLoading(false);
+        return;
+      }
+
+      // For demo purposes, accept any other combination
       const mockUser: User = {
         id: '1',
         email,

@@ -8,8 +8,9 @@ import { useAuth } from '@/context/AuthContext';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Shield, Building } from "lucide-react";
+import { Shield, Building, Info } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -81,6 +82,44 @@ const Login = () => {
     }
   };
 
+  const fillCompanyCredentials = () => {
+    // Auto-fill demo credentials (for company access)
+    const demoForm = document.getElementById('company-login-form');
+    if (demoForm) {
+      const emailInput = demoForm.querySelector('input[name="email"]') as HTMLInputElement;
+      const passwordInput = demoForm.querySelector('input[name="password"]') as HTMLInputElement;
+      
+      if (emailInput && passwordInput) {
+        emailInput.value = 'empresa@example.com';
+        passwordInput.value = 'Senha@123';
+        
+        // Update form data
+        const event = new Event('change', { bubbles: true });
+        emailInput.dispatchEvent(event);
+        passwordInput.dispatchEvent(event);
+      }
+    }
+  };
+
+  const fillAdminCredentials = () => {
+    // Auto-fill admin credentials (for super admin access)
+    const adminForm = document.getElementById('admin-login-form');
+    if (adminForm) {
+      const emailInput = adminForm.querySelector('input[name="email"]') as HTMLInputElement;
+      const passwordInput = adminForm.querySelector('input[name="password"]') as HTMLInputElement;
+      
+      if (emailInput && passwordInput) {
+        emailInput.value = 'admin@denuncieaqui.com';
+        passwordInput.value = 'admin123';
+        
+        // Update form data
+        const event = new Event('change', { bubbles: true });
+        emailInput.dispatchEvent(event);
+        passwordInput.dispatchEvent(event);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -102,17 +141,58 @@ const Login = () => {
             <TabsContent value="company">
               <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                 <h2 className="text-xl font-bold mb-4 text-center">Login - Portal da Empresa</h2>
-                <AuthForm type="login" onSubmit={handleLogin} />
+                
+                <Alert className="mb-4">
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    <strong>Credenciais provisórias:</strong> 
+                    <button 
+                      onClick={fillCompanyCredentials}
+                      className="ml-2 text-primary underline text-sm"
+                    >
+                      Preencher automaticamente
+                    </button>
+                    <div className="mt-1 text-sm">
+                      Email: empresa@example.com<br />
+                      Senha: Senha@123
+                    </div>
+                  </AlertDescription>
+                </Alert>
+                
+                <div id="company-login-form">
+                  <AuthForm type="login" onSubmit={handleLogin} />
+                </div>
               </div>
             </TabsContent>
             
             <TabsContent value="admin">
               <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                 <h2 className="text-xl font-bold mb-4 text-center">Login - Administração Central</h2>
+                
+                <Alert className="mb-4">
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    <strong>Credenciais Super Admin:</strong>
+                    <button 
+                      onClick={fillAdminCredentials}
+                      className="ml-2 text-primary underline text-sm"
+                    >
+                      Preencher automaticamente
+                    </button>
+                    <div className="mt-1 text-sm">
+                      Email: admin@denuncieaqui.com<br />
+                      Senha: admin123
+                    </div>
+                  </AlertDescription>
+                </Alert>
+                
                 <p className="text-sm text-gray-500 mb-4 text-center">
                   Acesso restrito para administradores da plataforma.
                 </p>
-                <AuthForm type="login" onSubmit={handleLogin} />
+                
+                <div id="admin-login-form">
+                  <AuthForm type="login" onSubmit={handleLogin} />
+                </div>
               </div>
             </TabsContent>
           </Tabs>
@@ -127,6 +207,9 @@ const Login = () => {
               </DialogTitle>
               <DialogDescription>
                 Digite o código de 6 dígitos do seu aplicativo autenticador.
+                <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-sm">
+                  <strong>Dica:</strong> Para este demo, qualquer código de 6 dígitos é aceito.
+                </div>
               </DialogDescription>
             </DialogHeader>
             
