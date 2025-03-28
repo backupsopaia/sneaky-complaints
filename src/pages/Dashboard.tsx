@@ -39,8 +39,8 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f0f4f9] flex">
-      {/* Sidebar - updated to use darker blue */}
+    <div className="min-h-screen bg-[#f0f4f9] dark:bg-background flex">
+      {/* Sidebar - with dark mode support */}
       <DashboardSidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 

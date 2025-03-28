@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Shield, BarChart3, FileText, Settings, LogOut, User, Star, Upload, Cog } from "lucide-react";
+import { Shield, FileText, User, Star, Upload, Cog, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/context/auth/useAuth';
 
@@ -14,10 +14,10 @@ const DashboardSidebar = ({ activeTab, setActiveTab, handleLogout }: DashboardSi
   const { user } = useAuth();
 
   return (
-    <div className="w-[134px] bg-[#003b87] text-white flex flex-col">
+    <div className="w-[134px] bg-[#003b87] dark:bg-card text-white flex flex-col">
       <div className="p-4 flex justify-center">
-        <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center">
-          <User size={24} className="text-[#003b87]" />
+        <div className="h-12 w-12 bg-white dark:bg-primary/10 rounded-full flex items-center justify-center">
+          <User size={24} className="text-[#003b87] dark:text-primary" />
         </div>
       </div>
       
@@ -28,7 +28,7 @@ const DashboardSidebar = ({ activeTab, setActiveTab, handleLogout }: DashboardSi
               onClick={() => setActiveTab('overview')}
               className={`w-full flex flex-col items-center gap-1 py-3 px-2 rounded-md transition-colors ${
                 activeTab === 'overview' 
-                  ? 'bg-white/10' 
+                  ? 'bg-white/10 dark:bg-white/5' 
                   : 'hover:bg-white/5'
               }`}
             >
@@ -42,7 +42,7 @@ const DashboardSidebar = ({ activeTab, setActiveTab, handleLogout }: DashboardSi
               onClick={() => setActiveTab('reports')}
               className={`w-full flex flex-col items-center gap-1 py-3 px-2 rounded-md transition-colors ${
                 activeTab === 'reports' 
-                  ? 'bg-white/10' 
+                  ? 'bg-white/10 dark:bg-white/5' 
                   : 'hover:bg-white/5'
               }`}
             >
@@ -78,7 +78,7 @@ const DashboardSidebar = ({ activeTab, setActiveTab, handleLogout }: DashboardSi
           onClick={() => setActiveTab('settings')}
           className={`w-full flex flex-col items-center gap-1 py-3 px-2 rounded-md transition-colors ${
             activeTab === 'settings' 
-              ? 'bg-white/10' 
+              ? 'bg-white/10 dark:bg-white/5' 
               : 'hover:bg-white/5'
           }`}
         >
