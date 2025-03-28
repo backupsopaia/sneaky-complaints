@@ -5,7 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import AuthForm from '@/components/AuthForm';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth/useAuth';
 
 const Register = () => {
   const navigate = useNavigate();

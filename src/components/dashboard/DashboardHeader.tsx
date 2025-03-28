@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Bell, User, Shield } from "lucide-react";
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth/useAuth';
 
 interface DashboardHeaderProps {
   activeTab: string;

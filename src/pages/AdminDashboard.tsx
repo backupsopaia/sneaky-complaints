@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
-import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from '@/context/auth/useAuth';
+import { useToast } from "@/hooks/use-toast";
 import {
   Building,
   Plus,
@@ -86,7 +85,6 @@ const AdminDashboard = () => {
         description: `A empresa ${newCompany.name} foi criada com sucesso.`,
       });
       
-      // Reset form and reload companies
       setNewCompany({
         name: '',
         domain: '',
@@ -133,12 +131,10 @@ const AdminDashboard = () => {
     }
   };
 
-  // Loading state
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">Carregando...</div>;
   }
 
-  // Redirect if not authenticated or not a super admin
   if (!isAuthenticated || !isSuperAdmin) {
     return <Navigate to="/login" replace />;
   }

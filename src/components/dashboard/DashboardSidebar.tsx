@@ -2,7 +2,7 @@
 import React from 'react';
 import { Shield, BarChart3, FileText, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth/useAuth';
 
 interface DashboardSidebarProps {
   activeTab: string;
