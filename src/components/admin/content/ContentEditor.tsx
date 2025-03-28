@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import ImageUploader from '@/components/admin/content/ImageUploader';
 import RichTextEditor from '@/components/admin/content/RichTextEditor';
 import ContentNavigation from '@/components/admin/content/ContentNavigation';
+import { useContent } from '@/context/content/ContentContext';
 
 interface ContentEditorProps {
   section: string;
@@ -18,23 +19,17 @@ interface ContentEditorProps {
 
 const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
   const { toast } = useToast();
+  const { content, updateContent } = useContent();
   const [activeTab, setActiveTab] = useState("text");
   const [saving, setSaving] = useState(false);
-  const [content, setContent] = useState({
-    title: section === 'homepage' ? 'Canal de denúncias seguro e eficiente para sua empresa' : 
-           section === 'login' ? 'Bem-vindo ao Canal de Denúncias' : 'Painel de Controle',
-    subtitle: section === 'homepage' ? 'Implemente um canal de denúncias em minutos, garantindo compliance, anonimato e gestão eficiente.' : 
-              section === 'login' ? 'Faça login para acessar o sistema' : 'Gerencie suas denúncias com eficiência',
-    bodyText: 'Edite este conteúdo conforme necessário para sua empresa.',
-    bannerImage: '/placeholder.svg',
-    customNotification: 'Bem-vindo ao sistema de denúncias. Todas as comunicações são seguras e anônimas.'
-  });
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [localContent, setLocalContent] = useState(content[section as keyof typeof content]);
 
   const handleSave = () => {
     setSaving(true);
-    // In a real implementation, this would save to a database
+    
+    // Atualiza o conteúdo no contexto global
+    updateContent(section as keyof typeof content, localContent);
+    
     setTimeout(() => {
       setSaving(false);
       toast({
@@ -44,11 +39,11 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
           section === 'login' ? 'tela de login' : 'dashboard'
         } foram salvas com sucesso.`,
       });
-    }, 1000);
+    }, 800);
   };
 
   const handleTextChange = (field: string, value: string) => {
-    setContent(prev => ({ ...prev, [field]: value }));
+    setLocalContent(prev => ({ ...prev, [field]: value }));
   };
 
   const getSectionTitle = () => {
@@ -91,7 +86,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
                 <Label htmlFor="title">Título</Label>
                 <Input
                   id="title"
-                  value={content.title}
+                  value={localContent.title}
                   onChange={(e) => handleTextChange('title', e.target.value)}
                 />
               </div>
@@ -100,7 +95,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
                 <Label htmlFor="subtitle">Subtítulo</Label>
                 <Input
                   id="subtitle"
-                  value={content.subtitle}
+                  value={localContent.subtitle}
                   onChange={(e) => handleTextChange('subtitle', e.target.value)}
                 />
               </div>
@@ -108,7 +103,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
               <div className="space-y-2">
                 <Label htmlFor="bodyText">Texto Principal</Label>
                 <RichTextEditor 
-                  initialValue={content.bodyText}
+                  initialValue={localContent.bodyText}
                   onChange={(value) => handleTextChange('bodyText', value)}
                 />
               </div>
@@ -116,7 +111,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
             
             <TabsContent value="images">
               <ImageUploader 
-                currentImage={content.bannerImage}
+                currentImage={localContent.bannerImage}
                 onImageChange={(url) => handleTextChange('bannerImage', url)}
                 label="Imagem de Banner"
               />
@@ -127,7 +122,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
                 <Label htmlFor="notification">Mensagem de Notificação</Label>
                 <Textarea
                   id="notification"
-                  value={content.customNotification}
+                  value={localContent.customNotification}
                   onChange={(e) => handleTextChange('customNotification', e.target.value)}
                   rows={4}
                   className="resize-none"

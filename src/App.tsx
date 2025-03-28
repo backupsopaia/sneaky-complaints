@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./context/auth/AuthContext";
+import { ContentProvider } from "./context/content/ContentContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { useIsMobile } from "./hooks/use-mobile";
 import { useEffect } from "react";
@@ -81,11 +82,13 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AnimatedRoutes />
-        </BrowserRouter>
+        <ContentProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AnimatedRoutes />
+          </BrowserRouter>
+        </ContentProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

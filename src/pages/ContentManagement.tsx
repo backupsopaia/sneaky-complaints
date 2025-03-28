@@ -6,11 +6,12 @@ import { useToast } from "@/hooks/use-toast";
 import AdminHeader from '@/components/admin/AdminHeader';
 import AdminTabNavigation from '@/components/admin/AdminTabNavigation';
 import ContentEditor from '@/components/admin/content/ContentEditor';
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const ContentManagement = () => {
   const { user, isAuthenticated, isLoading, isSuperAdmin } = useAuth();
   const { toast } = useToast();
+  const [activeSection, setActiveSection] = useState("homepage");
 
   if (isLoading) {
     return (
@@ -32,8 +33,16 @@ const ContentManagement = () => {
       <div className="container mx-auto py-6 px-4">
         <AdminHeader user={user} />
 
-        <Tabs defaultValue="homepage" className="space-y-6">
+        <Tabs defaultValue="homepage" value={activeSection} onValueChange={setActiveSection} className="space-y-6">
           <AdminTabNavigation activeTab="content" />
+          
+          <div className="flex justify-center mb-4">
+            <TabsList>
+              <TabsTrigger value="homepage">Página Inicial</TabsTrigger>
+              <TabsTrigger value="login">Tela de Login</TabsTrigger>
+              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="homepage">
             <ContentEditor section="homepage" />
