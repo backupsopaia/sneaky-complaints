@@ -1,27 +1,39 @@
 
 import React, { useState } from 'react';
+import { Search, AlertCircle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { motion } from 'framer-motion';
 import { isValidTrackingCode } from '@/utils/trackingCode';
-import { Search } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
 
 interface CheckReportStatusProps {
   onClose?: () => void;
 }
 
 const CheckReportStatus = ({ onClose }: CheckReportStatusProps) => {
-  const [trackingCode, setTrackingCode] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
-  const [reportStatus, setReportStatus] = useState<string | null>(null);
   const { toast } = useToast();
+  const [trackingCode, setTrackingCode] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [reportStatus, setReportStatus] = useState<{
+    status: string;
+    date: string;
+    lastUpdate: string;
+    category: string;
+    messages: number;
+  } | null>(null);
 
-  const handleSearch = () => {
+  const handleTrackingCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTrackingCode(e.target.value.toUpperCase());
+  };
+
+  const handleCheckStatus = () => {
     if (!trackingCode) {
       toast({
         variant: "destructive",
-        title: "Código necessário",
-        description: "Por favor, insira o código de acompanhamento da denúncia.",
+        title: "Código vazio",
+        description: "Por favor, insira um código de rastreamento.",
       });
       return;
     }
@@ -30,81 +42,136 @@ const CheckReportStatus = ({ onClose }: CheckReportStatusProps) => {
       toast({
         variant: "destructive",
         title: "Código inválido",
-        description: "O formato do código de acompanhamento é inválido. O formato correto é AAA-1234-BBB.",
+        description: "O formato do código deve ser AAA-1234-BBB.",
       });
       return;
     }
 
-    // Simulate searching
-    setIsSearching(true);
+    setIsLoading(true);
+
+    // Simulando uma requisição à API
     setTimeout(() => {
-      setIsSearching(false);
+      // Mockando uma resposta para demonstração
+      if (trackingCode === 'ABC-1234-XYZ') {
+        setReportStatus({
+          status: 'Em Análise',
+          date: '15/05/2023',
+          lastUpdate: '17/05/2023',
+          category: 'Assédio Moral',
+          messages: 2
+        });
+      } else {
+        setReportStatus({
+          status: 'Investigação',
+          date: '10/06/2023',
+          lastUpdate: '15/06/2023',
+          category: 'Fraude',
+          messages: 0
+        });
+      }
       
-      // In a real application, this would fetch the report status from the backend
-      // For now, we'll simulate a random status
-      const statuses = [
-        "Em análise inicial",
-        "Sob investigação",
-        "Aguardando informações adicionais",
-        "Em fase de conclusão",
-        "Resolvida"
-      ];
-      
-      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-      setReportStatus(randomStatus);
-      
-      toast({
-        title: "Status encontrado",
-        description: `Denúncia ${trackingCode} está: ${randomStatus}`,
-      });
+      setIsLoading(false);
     }, 1500);
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Pendente':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'Em Análise':
+        return 'bg-blue-100 text-blue-800';
+      case 'Investigação':
+        return 'bg-purple-100 text-purple-800';
+      case 'Concluído':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Verificar Status da Denúncia</h2>
-      
-      <div className="mb-6">
-        <p className="text-gray-600 mb-4">
-          Digite o código de acompanhamento para verificar o status atual da sua denúncia.
-        </p>
-        
-        <div className="flex gap-2">
-          <Input
-            placeholder="Exemplo: ABC-1234-XYZ"
-            value={trackingCode}
-            onChange={(e) => setTrackingCode(e.target.value.toUpperCase())}
-            className="flex-1"
-          />
+    <Card className="glass">
+      <CardHeader>
+        <CardTitle className="text-lg">Verificar Status da Denúncia</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+            <Input
+              type="text"
+              placeholder="Digite o código de rastreamento"
+              value={trackingCode}
+              onChange={handleTrackingCodeChange}
+              className="pl-8"
+              maxLength={12}
+            />
+          </div>
           <Button 
-            onClick={handleSearch} 
-            disabled={isSearching}
+            onClick={handleCheckStatus} 
+            disabled={isLoading}
+            className="whitespace-nowrap"
           >
-            {isSearching ? "Buscando..." : "Verificar"}
-            {!isSearching && <Search className="ml-2 h-4 w-4" />}
+            {isLoading ? "Verificando..." : "Verificar Status"}
           </Button>
         </div>
-      </div>
+        
+        {reportStatus && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="border rounded-md p-4 space-y-3"
+          >
+            <div className="flex justify-between items-center">
+              <h3 className="font-medium">Protocolo: {trackingCode}</h3>
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(reportStatus.status)}`}>
+                {reportStatus.status}
+              </span>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div>
+                <p className="text-gray-500">Categoria</p>
+                <p>{reportStatus.category}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Data de Registro</p>
+                <p>{reportStatus.date}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Última Atualização</p>
+                <p>{reportStatus.lastUpdate}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Mensagens</p>
+                <p>{reportStatus.messages} novas</p>
+              </div>
+            </div>
+            
+            {reportStatus.messages > 0 && (
+              <div className="bg-primary/10 p-3 rounded flex items-start gap-2">
+                <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <p className="text-sm">
+                  Você tem mensagens não lidas. Para visualizá-las, faça login no sistema ou acesse a página de denúncias.
+                </p>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </CardContent>
       
-      {reportStatus && (
-        <div className="bg-gray-50 p-4 rounded-md">
-          <h3 className="font-medium mb-2">Resultado da Consulta:</h3>
-          <p className="text-gray-700">
-            Denúncia <span className="font-mono font-semibold">{trackingCode}</span>
-          </p>
-          <p className="text-gray-700">
-            Status: <span className="font-semibold text-primary">{reportStatus}</span>
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            Última atualização: {new Date().toLocaleDateString()}
-          </p>
-        </div>
+      {onClose && (
+        <CardFooter>
+          <Button 
+            variant="outline" 
+            className="w-full"
+            onClick={onClose}
+          >
+            Voltar
+          </Button>
+        </CardFooter>
       )}
-      
-      <p className="text-sm text-gray-500 mt-4">
-        Sua privacidade é importante. Nenhuma informação pessoal é exibida ao consultar o status.
-      </p>
-    </div>
+    </Card>
   );
 };
 

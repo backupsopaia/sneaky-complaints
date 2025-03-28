@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, MessageSquare, Eye } from "lucide-react";
+import { Search, Filter, MessageSquare, Eye, Calendar, Tag, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,6 +26,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 // Mock data for the reports
 const mockReports = [
@@ -35,7 +45,9 @@ const mockReports = [
     category: 'Assédio Moral',
     status: 'Em Análise',
     anonymous: true,
-    trackingCode: 'ABC-1234-XYZ'
+    trackingCode: 'ABC-1234-XYZ',
+    unreadMessages: 2,
+    evidence: ['documento.pdf', 'imagem.jpg']
   },
   {
     id: '2',
@@ -43,7 +55,9 @@ const mockReports = [
     category: 'Fraude',
     status: 'Investigação',
     anonymous: false,
-    trackingCode: 'DEF-5678-UVW'
+    trackingCode: 'DEF-5678-UVW',
+    unreadMessages: 0,
+    evidence: ['planilha.xlsx']
   },
   {
     id: '3',
@@ -51,7 +65,9 @@ const mockReports = [
     category: 'Conflito de Interesses',
     status: 'Concluído',
     anonymous: true,
-    trackingCode: 'GHI-9012-RST'
+    trackingCode: 'GHI-9012-RST',
+    unreadMessages: 0,
+    evidence: []
   },
   {
     id: '4',
@@ -59,7 +75,9 @@ const mockReports = [
     category: 'Assédio Sexual',
     status: 'Pendente',
     anonymous: true,
-    trackingCode: 'JKL-3456-MNO'
+    trackingCode: 'JKL-3456-MNO',
+    unreadMessages: 1,
+    evidence: ['audio.mp3', 'documento.pdf']
   },
   {
     id: '5',
@@ -67,7 +85,9 @@ const mockReports = [
     category: 'Corrupção',
     status: 'Em Análise',
     anonymous: false,
-    trackingCode: 'PQR-7890-STU'
+    trackingCode: 'PQR-7890-STU',
+    unreadMessages: 0,
+    evidence: ['contrato.pdf']
   }
 ];
 
@@ -77,8 +97,16 @@ interface ReportsListProps {
 
 const ReportsList = ({ className }: ReportsListProps) => {
   const navigate = useNavigate();
-  const [filter, setFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Filtros
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [dateFromFilter, setDateFromFilter] = useState<Date | undefined>(undefined);
+  const [dateToFilter, setDateToFilter] = useState<Date | undefined>(undefined);
+  const [hasEvidenceFilter, setHasEvidenceFilter] = useState<string>('all');
+  const [hasMessagesFilter, setHasMessagesFilter] = useState<string>('all');
   
   const statusOptions = [
     { value: 'all', label: 'Todos os Status' },
@@ -88,15 +116,52 @@ const ReportsList = ({ className }: ReportsListProps) => {
     { value: 'Concluído', label: 'Concluído' },
   ];
   
-  // Filter reports based on status and search term
+  const categoryOptions = [
+    { value: 'all', label: 'Todas as Categorias' },
+    { value: 'Assédio Moral', label: 'Assédio Moral' },
+    { value: 'Assédio Sexual', label: 'Assédio Sexual' },
+    { value: 'Fraude', label: 'Fraude' },
+    { value: 'Conflito de Interesses', label: 'Conflito de Interesses' },
+    { value: 'Corrupção', label: 'Corrupção' },
+  ];
+  
+  // Filter reports based on all filters
   const filteredReports = mockReports.filter(report => {
-    const matchesStatus = filter === 'all' || report.status === filter;
+    // Status filter
+    if (statusFilter !== 'all' && report.status !== statusFilter) return false;
+    
+    // Category filter
+    if (categoryFilter !== 'all' && report.category !== categoryFilter) return false;
+    
+    // Date range filter
+    if (dateFromFilter) {
+      const reportDate = new Date(report.date);
+      if (reportDate < dateFromFilter) return false;
+    }
+    
+    if (dateToFilter) {
+      const reportDate = new Date(report.date);
+      // Add one day to include the end date
+      const endDate = new Date(dateToFilter);
+      endDate.setDate(endDate.getDate() + 1);
+      if (reportDate > endDate) return false;
+    }
+    
+    // Evidence filter
+    if (hasEvidenceFilter === 'with' && report.evidence.length === 0) return false;
+    if (hasEvidenceFilter === 'without' && report.evidence.length > 0) return false;
+    
+    // Messages filter
+    if (hasMessagesFilter === 'with' && report.unreadMessages === 0) return false;
+    if (hasMessagesFilter === 'without' && report.unreadMessages > 0) return false;
+    
+    // Search term
     const matchesSearch = 
       report.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.trackingCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.id.includes(searchTerm);
     
-    return matchesStatus && matchesSearch;
+    return matchesSearch;
   });
   
   const handleViewReport = (id: string) => {
@@ -117,6 +182,29 @@ const ReportsList = ({ className }: ReportsListProps) => {
         return 'bg-gray-100 text-gray-800';
     }
   };
+  
+  const clearFilters = () => {
+    setStatusFilter('all');
+    setCategoryFilter('all');
+    setDateFromFilter(undefined);
+    setDateToFilter(undefined);
+    setHasEvidenceFilter('all');
+    setHasMessagesFilter('all');
+    setSearchTerm('');
+  };
+  
+  const getActiveFiltersCount = () => {
+    let count = 0;
+    if (statusFilter !== 'all') count++;
+    if (categoryFilter !== 'all') count++;
+    if (dateFromFilter) count++;
+    if (dateToFilter) count++;
+    if (hasEvidenceFilter !== 'all') count++;
+    if (hasMessagesFilter !== 'all') count++;
+    return count;
+  };
+  
+  const activeFiltersCount = getActiveFiltersCount();
 
   return (
     <Card className={className}>
@@ -137,26 +225,161 @@ const ReportsList = ({ className }: ReportsListProps) => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-gray-500" />
-              <Select
-                value={filter}
-                onValueChange={setFilter}
-              >
-                <SelectTrigger className="w-full sm:w-40">
-                  <SelectValue placeholder="Filtrar por status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {statusOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-1"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <Filter className="h-4 w-4" />
+              <span>Filtros</span>
+              {activeFiltersCount > 0 && (
+                <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center rounded-full text-xs">
+                  {activeFiltersCount}
+                </Badge>
+              )}
+            </Button>
           </div>
         </div>
+        
+        {showFilters && (
+          <div className="mt-4 p-4 border rounded-md bg-background space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-medium">Filtros Avançados</h3>
+              <Button variant="ghost" size="sm" onClick={clearFilters} className="h-8">
+                <X className="h-4 w-4 mr-1" />
+                Limpar Filtros
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-sm font-medium">Status</label>
+                <Select 
+                  value={statusFilter} 
+                  onValueChange={setStatusFilter}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filtrar por status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statusOptions.map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">Categoria</label>
+                <Select 
+                  value={categoryFilter} 
+                  onValueChange={setCategoryFilter}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filtrar por categoria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categoryOptions.map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">Data de Início</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-left font-normal"
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateFromFilter ? (
+                        format(dateFromFilter, "dd/MM/yyyy")
+                      ) : (
+                        <span>Selecionar data</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={dateFromFilter}
+                      onSelect={setDateFromFilter}
+                      locale={ptBR}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">Data de Fim</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-left font-normal"
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateToFilter ? (
+                        format(dateToFilter, "dd/MM/yyyy")
+                      ) : (
+                        <span>Selecionar data</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={dateToFilter}
+                      onSelect={setDateToFilter}
+                      locale={ptBR}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">Evidências</label>
+                <Select 
+                  value={hasEvidenceFilter} 
+                  onValueChange={setHasEvidenceFilter}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filtrar por evidências" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas</SelectItem>
+                    <SelectItem value="with">Com evidências</SelectItem>
+                    <SelectItem value="without">Sem evidências</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">Mensagens não lidas</label>
+                <Select 
+                  value={hasMessagesFilter} 
+                  onValueChange={setHasMessagesFilter}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filtrar por mensagens" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas</SelectItem>
+                    <SelectItem value="with">Com mensagens</SelectItem>
+                    <SelectItem value="without">Sem mensagens</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         <div className="rounded-md border">
@@ -202,9 +425,18 @@ const ReportsList = ({ className }: ReportsListProps) => {
                           <Eye size={16} className="mr-1" />
                           <span>Ver</span>
                         </Button>
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="relative"
+                        >
                           <MessageSquare size={16} className="mr-1" />
                           <span>Responder</span>
+                          {report.unreadMessages > 0 && (
+                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                              {report.unreadMessages}
+                            </span>
+                          )}
                         </Button>
                       </div>
                     </TableCell>

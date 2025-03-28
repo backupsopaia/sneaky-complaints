@@ -118,7 +118,7 @@ const ReportDetailsSection = ({
         </div>
         
         {reportData.hasEvidence && (
-          <div className="space-y-4">
+          <div className="space-y-4 mt-4 p-4 border rounded-md bg-gray-50">
             <div>
               <Label htmlFor="evidenceDescription">Descreva as Evidências</Label>
               <Textarea
@@ -131,14 +131,21 @@ const ReportDetailsSection = ({
             </div>
             
             <div>
-              <Label>Upload de Evidências</Label>
+              <Label className="mb-2 block">Upload de Evidências</Label>
               <FileUploader 
                 onFilesSelected={handleFileChange}
                 currentFiles={reportData.files}
+                maxFiles={5}
+                maxSizeInMB={10}
+                acceptedFileTypes=".jpg,.jpeg,.png,.pdf,.mp3,.mp4,.doc,.docx"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Formatos aceitos: PDF, JPG, PNG, MP3, MP4 (máx. 10MB por arquivo)
-              </p>
+              <div className="mt-3 text-xs text-gray-500 space-y-1">
+                <p>Formatos aceitos: PDF, Word, JPG, PNG, MP3, MP4</p>
+                <p>Tamanho máximo: 10MB por arquivo, 5 arquivos no total</p>
+                <p className="text-primary/80 font-medium">
+                  Todos os uploads são criptografados para proteção dos dados
+                </p>
+              </div>
             </div>
           </div>
         )}
