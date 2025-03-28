@@ -16,7 +16,7 @@ const DashboardMobileTabs = ({ activeTab, onTabChange }: DashboardMobileTabsProp
   const tabs = [
     { id: 'overview', label: 'Visão Geral', icon: BarChart3 },
     { id: 'reports', label: 'Denúncias', icon: FileText },
-    { id: 'settings', label: 'Configurações', icon: Settings }
+    { id: 'settings', label: 'Definições', icon: Settings }
   ];
   
   return (

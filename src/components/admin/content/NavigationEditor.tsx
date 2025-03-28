@@ -48,7 +48,7 @@ const NavigationEditor = () => {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Gerenciar Menu de Navegação</CardTitle>
+        <CardTitle>Gerir Menu de Navegação</CardTitle>
         <CardDescription>Adicione, edite ou remova itens do menu de navegação principal</CardDescription>
       </CardHeader>
       <CardContent>

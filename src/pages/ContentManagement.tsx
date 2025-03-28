@@ -41,8 +41,8 @@ const ContentManagement = () => {
           <div className="flex justify-center mb-4">
             <TabsList>
               <TabsTrigger value="homepage">Página Inicial</TabsTrigger>
-              <TabsTrigger value="login">Tela de Login</TabsTrigger>
-              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              <TabsTrigger value="login">Página de Login</TabsTrigger>
+              <TabsTrigger value="dashboard">Painel de Controlo</TabsTrigger>
               <TabsTrigger value="navigation">Navegação</TabsTrigger>
               <TabsTrigger value="footer">Rodapé</TabsTrigger>
             </TabsList>

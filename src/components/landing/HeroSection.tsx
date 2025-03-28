@@ -21,10 +21,10 @@ const HeroSection = () => {
             <div className="space-y-2" dangerouslySetInnerHTML={{ __html: bodyText }} />
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
               <Button onClick={() => navigate('/login')}>
-                Fazer Login
+                Iniciar Sessão
               </Button>
               <Button variant="outline" onClick={() => navigate('/register')}>
-                Registrar-se
+                Registar-se
               </Button>
             </div>
           </div>

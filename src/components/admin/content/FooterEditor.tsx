@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useContent } from '@/context/content';
 import { Button } from "@/components/ui/button";
@@ -36,7 +35,7 @@ const FooterEditor = () => {
     
     toast({
       title: "Item adicionado",
-      description: `O item "${newItem.label}" foi adicionado à seção "${newItem.section}".`,
+      description: `O item "${newItem.label}" foi adicionado à secção "${newItem.section}".`,
     });
   };
 
@@ -45,7 +44,7 @@ const FooterEditor = () => {
     
     toast({
       title: "Item removido",
-      description: `O item "${label}" foi removido da seção.`,
+      description: `O item "${label}" foi removido da secção.`,
     });
   };
 
@@ -56,7 +55,7 @@ const FooterEditor = () => {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Gerenciar Rodapé</CardTitle>
+        <CardTitle>Gerir Rodapé</CardTitle>
         <CardDescription>Configure textos, links e menu do rodapé do site</CardDescription>
       </CardHeader>
       <CardContent>
@@ -149,7 +148,7 @@ const FooterEditor = () => {
             <div className="space-y-4">
               <div className="flex flex-col md:flex-row gap-4 items-end">
                 <div className="w-full md:w-auto">
-                  <Label htmlFor="menu-section">Seção</Label>
+                  <Label htmlFor="menu-section">Secção</Label>
                   <select
                     id="menu-section"
                     value={newItem.section}
@@ -188,7 +187,7 @@ const FooterEditor = () => {
                 <div className="space-y-4">
                   <h3 className="font-semibold">Produto</h3>
                   {content.footer.menuGroups.product.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">Nenhum item nesta seção</p>
+                    <p className="text-sm text-muted-foreground">Nenhum item nesta secção</p>
                   ) : (
                     <div className="space-y-2">
                       {content.footer.menuGroups.product.map((item) => (
@@ -238,7 +237,7 @@ const FooterEditor = () => {
                 <div className="space-y-4">
                   <h3 className="font-semibold">Empresa</h3>
                   {content.footer.menuGroups.company.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">Nenhum item nesta seção</p>
+                    <p className="text-sm text-muted-foreground">Nenhum item nesta secção</p>
                   ) : (
                     <div className="space-y-2">
                       {content.footer.menuGroups.company.map((item) => (
@@ -288,7 +287,7 @@ const FooterEditor = () => {
                 <div className="space-y-4">
                   <h3 className="font-semibold">Legal</h3>
                   {content.footer.menuGroups.legal.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">Nenhum item nesta seção</p>
+                    <p className="text-sm text-muted-foreground">Nenhum item nesta secção</p>
                   ) : (
                     <div className="space-y-2">
                       {content.footer.menuGroups.legal.map((item) => (

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { SaveIcon, Image, AlignCenter, Upload, LayoutDashboard } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,11 +35,11 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
     setTimeout(() => {
       setSaving(false);
       toast({
-        title: "Conteúdo salvo",
+        title: "Conteúdo guardado",
         description: `As alterações no conteúdo da ${
           section === 'homepage' ? 'página inicial' : 
-          section === 'login' ? 'tela de login' : 'dashboard'
-        } foram salvas com sucesso.`,
+          section === 'login' ? 'página de login' : 'painel de controlo'
+        } foram guardadas com sucesso.`,
       });
     }, 800);
   };
@@ -52,9 +53,9 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
       case 'homepage':
         return 'Página Inicial';
       case 'login':
-        return 'Tela de Login';
+        return 'Página de Login';
       case 'dashboard':
-        return 'Dashboard';
+        return 'Painel de Controlo';
       default:
         return 'Conteúdo';
     }
@@ -129,7 +130,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
                   className="resize-none"
                 />
                 <p className="text-sm text-gray-500">
-                  Esta mensagem será exibida aos usuários quando acessarem o sistema.
+                  Esta mensagem será exibida aos utilizadores quando acederem ao sistema.
                 </p>
               </div>
             </TabsContent>
@@ -143,7 +144,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
           className="ml-auto flex items-center"
         >
           <SaveIcon className="h-4 w-4 mr-2" />
-          {saving ? 'Salvando...' : 'Salvar Alterações'}
+          {saving ? 'A guardar...' : 'Guardar Alterações'}
         </Button>
       </CardFooter>
     </Card>
