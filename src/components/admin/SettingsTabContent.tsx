@@ -81,11 +81,12 @@ const SettingsTabContent = ({ user }: SettingsTabContentProps) => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="language">Idioma Padrão</Label>
-                    <Select defaultValue="pt-br">
+                    <Select defaultValue="pt-pt">
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione um idioma" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="pt-pt">Português (Portugal)</SelectItem>
                         <SelectItem value="pt-br">Português (Brasil)</SelectItem>
                         <SelectItem value="en">English</SelectItem>
                         <SelectItem value="es">Español</SelectItem>
@@ -103,7 +104,7 @@ const SettingsTabContent = ({ user }: SettingsTabContentProps) => {
               </h3>
               <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
                 <div className="flex justify-between items-center mb-4">
-                  <p className="text-sm font-medium">Usuários com acesso de administrador</p>
+                  <p className="text-sm font-medium">Utilizadores com acesso de administrador</p>
                   <Button size="sm" variant="outline" className="hover-lift">
                     <Plus className="h-4 w-4 mr-2" />
                     Adicionar
@@ -154,7 +155,7 @@ const SettingsTabContent = ({ user }: SettingsTabContentProps) => {
                   <div className="space-y-0.5">
                     <Label>Logs de Atividade</Label>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Registra todas as ações de administradores
+                      Regista todas as ações de administradores
                     </p>
                   </div>
                   <Switch checked={true} />
@@ -184,7 +185,7 @@ const SettingsTabContent = ({ user }: SettingsTabContentProps) => {
           </div>
         </CardContent>
         <CardFooter className="border-t border-gray-100 dark:border-gray-700 pt-4">
-          <Button className="corporate-gradient text-white hover-lift">Salvar Configurações</Button>
+          <Button className="corporate-gradient text-white hover-lift">Guardar Configurações</Button>
         </CardFooter>
       </Card>
     </motion.div>
