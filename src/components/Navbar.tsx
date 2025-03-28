@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Shield, Menu, X, FileText, User, Home } from "lucide-react";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useContent } from '@/context/content/ContentContext';
+import { useContent } from '@/context/content';
 import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {

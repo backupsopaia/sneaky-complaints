@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { useContent } from '@/context/content/ContentContext';
+import { useContent } from '@/context/content';
 
 const HeroSection = () => {
   const navigate = useNavigate();

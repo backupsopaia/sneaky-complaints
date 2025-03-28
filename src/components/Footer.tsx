@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
-import { useContent } from '@/context/content/ContentContext';
+import { useContent } from '@/context/content';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

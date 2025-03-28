@@ -1,12 +1,10 @@
 
 import React, { createContext, useState, useEffect } from 'react';
-import { ContentContextType, SiteContent, MenuItem, FooterSection } from './types';
+import { ContentContextType, SiteContent, MenuItem, FooterSection, ContentSection } from './types';
 import { defaultContent } from './defaultContent';
 import { generateId, saveContentToStorage, loadContentFromStorage } from './contentUtils';
 
-export { ContentSection } from './types';
-
-const ContentContext = createContext<ContentContextType>({
+export const ContentContext = createContext<ContentContextType>({
   content: defaultContent,
   updateContent: () => {},
   addMenuItem: () => {},
@@ -191,5 +189,3 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
     </ContentContext.Provider>
   );
 };
-
-export { useContent } from './useContent';

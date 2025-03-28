@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +9,20 @@ import { ContentProvider } from "./context/content";
 import { AnimatePresence, motion } from "framer-motion";
 import { useIsMobile } from "./hooks/use-mobile";
 import { useEffect } from "react";
+
+// Import all page components
+import Index from "./pages/Index";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import ContentManagement from "./pages/ContentManagement";
+import ReportForm from "./pages/ReportForm";
+import ReportDetails from "./pages/ReportDetails";
+import CheckStatus from "./pages/CheckStatus";
+import NotFound from "./pages/NotFound";
+import Footer from "./components/Footer";
+import MobileNavigation from "./components/MobileNavigation";
 
 const queryClient = new QueryClient();
 
