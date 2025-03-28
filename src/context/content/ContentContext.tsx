@@ -1,7 +1,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-interface ContentSection {
+// Export the interface so it can be imported in other files
+export interface ContentSection {
   title: string;
   subtitle: string;
   bodyText: string;
