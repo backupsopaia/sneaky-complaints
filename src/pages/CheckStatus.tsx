@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Navbar from '@/components/Navbar';
-import { CheckReportStatus } from '@/components/report/CheckReportStatus';
+import CheckReportStatus from '@/components/report/CheckReportStatus';
 
 const CheckStatus = () => {
   const [trackingCode, setTrackingCode] = useState('');
