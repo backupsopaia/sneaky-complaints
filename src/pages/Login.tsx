@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
@@ -102,14 +103,7 @@ const Login = () => {
           />
         </div>
         
-        <TwoFactorModal 
-          showTwoFactor={false}
-          setShowTwoFactor={setShowTwoFactor}
-          twoFactorCode={twoFactorCode}
-          setTwoFactorCode={setTwoFactorCode}
-          handleTwoFactorSubmit={handleTwoFactorSubmit}
-          generateRandomCode={generateRandomCode}
-        />
+        <TwoFactorModal />
       </div>
     </div>
   );
