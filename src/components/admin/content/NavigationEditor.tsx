@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useContent } from '@/context/content/ContentContext';
+import { useContent } from '@/context/content';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { SaveIcon, Image, AlignCenter, Upload, LayoutDashboard } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,11 +10,10 @@ import { useToast } from "@/hooks/use-toast";
 import ImageUploader from '@/components/admin/content/ImageUploader';
 import RichTextEditor from '@/components/admin/content/RichTextEditor';
 import ContentNavigation from '@/components/admin/content/ContentNavigation';
-import { useContent } from '@/context/content/ContentContext';
-import { ContentSection } from '@/context/content/ContentContext';
+import { useContent, ContentSection } from '@/context/content';
 
 interface ContentEditorProps {
-  section: string;
+  section: 'homepage' | 'login' | 'dashboard';
 }
 
 const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
@@ -24,7 +22,6 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
   const [activeTab, setActiveTab] = useState("text");
   const [saving, setSaving] = useState(false);
   
-  // Explicitly type the localContent based on section type
   const [localContent, setLocalContent] = useState<ContentSection>(
     content[section as 'homepage' | 'login' | 'dashboard'] as ContentSection
   );
@@ -32,7 +29,6 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ section }) => {
   const handleSave = () => {
     setSaving(true);
     
-    // Atualiza o conteúdo no contexto global
     updateContent(section as keyof typeof content, localContent);
     
     setTimeout(() => {
