@@ -1,62 +1,10 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import CryptoJS from 'crypto-js';
-
-type User = {
-  id: string;
-  email: string;
-  companyName?: string;
-  role: 'superadmin' | 'admin' | 'manager' | 'auditor' | 'user';
-  plan?: 'free' | 'pro' | 'enterprise';
-  twoFactorEnabled?: boolean;
-  managedCompanies?: Company[];
-};
-
-type Company = {
-  id: string;
-  name: string;
-  domain?: string;
-  customDomain?: string;
-  active: boolean;
-  plan: 'free' | 'pro' | 'enterprise';
-  createdAt: string;
-  settings: CompanySettings;
-};
-
-type CompanySettings = {
-  logoUrl?: string;
-  primaryColor?: string;
-  welcomeMessage?: string;
-  privacyPolicy?: string;
-  reportCategories: string[];
-  dataRetentionPeriod: number;
-  requiresAnonymity: boolean;
-};
-
-type AuthContextType = {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  isSuperAdmin: boolean;
-  login: (email: string, password: string, token?: string, asSuperAdmin?: boolean) => Promise<void>;
-  register: (email: string, password: string, companyName: string) => Promise<void>;
-  logout: () => void;
-  setupTwoFactor: () => Promise<string>;
-  verifyTwoFactor: (token: string) => Promise<boolean>;
-  encryptData: (data: string) => string;
-  decryptData: (encryptedData: string) => string;
-  gdprConsent: boolean;
-  setGdprConsent: (consent: boolean) => void;
-  dataRetentionPeriod: number;
-  createCompany: (company: Omit<Company, 'id' | 'createdAt'>) => Promise<Company>;
-  updateCompanySettings: (companyId: string, settings: Partial<CompanySettings>) => Promise<void>;
-  getCompanies: () => Promise<Company[]>;
-  getCompanyById: (id: string) => Promise<Company | null>;
-  activateCompany: (id: string) => Promise<void>;
-  deactivateCompany: (id: string) => Promise<void>;
-};
-
-const SECRET_KEY = "YourSecureAppEncryptionKey-LGPD-GDPR-Compliant";
+import { User, AuthContextType } from '../types/auth';
+import { encryptData, decryptData, isValidInput, isStrongPassword } from '../utils/authUtils';
+import { createCompany, updateCompanySettings, getCompanies, getCompanyById, activateCompany, deactivateCompany } from '../services/companyService';
+import { getMockCompanies } from '../mocks/companyData';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -65,15 +13,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
   const [gdprConsent, setGdprConsent] = useState(false);
   const dataRetentionPeriod = 365;
-
-  const encryptData = (data: string): string => {
-    return CryptoJS.AES.encrypt(data, SECRET_KEY).toString();
-  };
-
-  const decryptData = (encryptedData: string): string => {
-    const bytes = CryptoJS.AES.decrypt(encryptedData, SECRET_KEY);
-    return bytes.toString(CryptoJS.enc.Utf8);
-  };
 
   useEffect(() => {
     const checkAuth = () => {
@@ -220,100 +159,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const verifyTwoFactor = async (token: string): Promise<boolean> => {
     return token.length === 6 && /^\d+$/.test(token);
-  };
-
-  const isValidInput = (input: string): boolean => {
-    return !/<script|onerror|javascript:/i.test(input);
-  };
-
-  const isStrongPassword = (password: string): boolean => {
-    return password.length >= 8 && 
-           /[A-Z]/.test(password) && 
-           /[a-z]/.test(password) && 
-           /[0-9]/.test(password) && 
-           /[^A-Za-z0-9]/.test(password);
-  };
-
-  const getMockCompanies = (): Company[] => {
-    return [
-      {
-        id: 'company-1',
-        name: 'Empresa Exemplo A',
-        domain: 'empresaa',
-        customDomain: 'denuncias.empresaa.com.br',
-        active: true,
-        plan: 'enterprise',
-        createdAt: new Date(2023, 1, 15).toISOString(),
-        settings: {
-          logoUrl: '/logos/company-a.png',
-          primaryColor: '#004D99',
-          welcomeMessage: 'Bem-vindo ao canal de denúncias da Empresa A',
-          privacyPolicy: 'Política de privacidade personalizada...',
-          reportCategories: ['Assédio', 'Fraude', 'Corrupção', 'Discriminação'],
-          dataRetentionPeriod: 730,
-          requiresAnonymity: true
-        }
-      },
-      {
-        id: 'company-2',
-        name: 'Corporação B',
-        domain: 'corpb',
-        active: true,
-        plan: 'pro',
-        createdAt: new Date(2023, 5, 20).toISOString(),
-        settings: {
-          primaryColor: '#2E7D32',
-          reportCategories: ['Assédio Moral', 'Assédio Sexual', 'Violação de Compliance'],
-          dataRetentionPeriod: 365,
-          requiresAnonymity: false
-        }
-      },
-      {
-        id: 'company-3',
-        name: 'Startup C',
-        domain: 'startupc',
-        active: false,
-        plan: 'free',
-        createdAt: new Date(2023, 8, 5).toISOString(),
-        settings: {
-          reportCategories: ['Conduta Inapropriada', 'Questões Éticas'],
-          dataRetentionPeriod: 180,
-          requiresAnonymity: true
-        }
-      }
-    ];
-  };
-
-  const createCompany = async (companyData: Omit<Company, 'id' | 'createdAt'>): Promise<Company> => {
-    const newCompany: Company = {
-      ...companyData,
-      id: `company-${Date.now()}`,
-      createdAt: new Date().toISOString()
-    };
-
-    console.log(`[LGPD/GDPR Log] Company created: ${newCompany.id} at ${Date.now()}`);
-    return newCompany;
-  };
-
-  const updateCompanySettings = async (companyId: string, settings: Partial<CompanySettings>): Promise<void> => {
-    console.log(`[LGPD/GDPR Log] Company settings updated: ${companyId} at ${Date.now()}`);
-  };
-
-  const getCompanies = async (): Promise<Company[]> => {
-    return getMockCompanies();
-  };
-
-  const getCompanyById = async (id: string): Promise<Company | null> => {
-    const companies = getMockCompanies();
-    return companies.find(company => company.id === id) || null;
-  };
-
-  const activateCompany = async (id: string): Promise<void> => {
-    console.log(`[LGPD/GDPR Log] Company activated: ${id} at ${Date.now()}`);
-  };
-
-  const deactivateCompany = async (id: string): Promise<void> => {
-    console.log(`[LGPD/GDPR Log] Company deactivated: ${id} at ${Date.now()}`);
   };
 
   return (
