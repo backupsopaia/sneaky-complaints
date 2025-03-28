@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import CryptoJS from 'crypto-js';
@@ -7,16 +6,39 @@ type User = {
   id: string;
   email: string;
   companyName?: string;
-  role: 'admin' | 'user';
+  role: 'superadmin' | 'admin' | 'manager' | 'auditor' | 'user';
   plan?: 'free' | 'pro' | 'enterprise';
   twoFactorEnabled?: boolean;
+  managedCompanies?: Company[];
+};
+
+type Company = {
+  id: string;
+  name: string;
+  domain?: string;
+  customDomain?: string;
+  active: boolean;
+  plan: 'free' | 'pro' | 'enterprise';
+  createdAt: string;
+  settings: CompanySettings;
+};
+
+type CompanySettings = {
+  logoUrl?: string;
+  primaryColor?: string;
+  welcomeMessage?: string;
+  privacyPolicy?: string;
+  reportCategories: string[];
+  dataRetentionPeriod: number;
+  requiresAnonymity: boolean;
 };
 
 type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string, token?: string) => Promise<void>;
+  isSuperAdmin: boolean;
+  login: (email: string, password: string, token?: string, asSuperAdmin?: boolean) => Promise<void>;
   register: (email: string, password: string, companyName: string) => Promise<void>;
   logout: () => void;
   setupTwoFactor: () => Promise<string>;
@@ -25,10 +47,15 @@ type AuthContextType = {
   decryptData: (encryptedData: string) => string;
   gdprConsent: boolean;
   setGdprConsent: (consent: boolean) => void;
-  dataRetentionPeriod: number; // in days
+  dataRetentionPeriod: number;
+  createCompany: (company: Omit<Company, 'id' | 'createdAt'>) => Promise<Company>;
+  updateCompanySettings: (companyId: string, settings: Partial<CompanySettings>) => Promise<void>;
+  getCompanies: () => Promise<Company[]>;
+  getCompanyById: (id: string) => Promise<Company | null>;
+  activateCompany: (id: string) => Promise<void>;
+  deactivateCompany: (id: string) => Promise<void>;
 };
 
-// Secret key for local encryption - in a real app this would be retrieved from a secure source
 const SECRET_KEY = "YourSecureAppEncryptionKey-LGPD-GDPR-Compliant";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,20 +64,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [gdprConsent, setGdprConsent] = useState(false);
-  const dataRetentionPeriod = 365; // Default 1 year
-  
-  // AES encryption for sensitive data
+  const dataRetentionPeriod = 365;
+
   const encryptData = (data: string): string => {
     return CryptoJS.AES.encrypt(data, SECRET_KEY).toString();
   };
-  
+
   const decryptData = (encryptedData: string): string => {
     const bytes = CryptoJS.AES.decrypt(encryptedData, SECRET_KEY);
     return bytes.toString(CryptoJS.enc.Utf8);
   };
 
   useEffect(() => {
-    // Check for an existing user session in localStorage with encryption
     const checkAuth = () => {
       try {
         const encryptedUser = localStorage.getItem('encrypted_user');
@@ -58,11 +83,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const decryptedUserData = decryptData(encryptedUser);
           setUser(JSON.parse(decryptedUserData));
           
-          // GDPR/LGPD - Check session age and log consent
           const sessionTime = localStorage.getItem('session_start_time');
           if (sessionTime) {
             const sessionAge = Date.now() - parseInt(sessionTime);
-            // If session is older than the retention period (in milliseconds), logout
             if (sessionAge > dataRetentionPeriod * 24 * 60 * 60 * 1000) {
               logout();
               toast({
@@ -84,16 +107,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuth();
   }, []);
 
-  const login = async (email: string, password: string, token?: string) => {
+  const isSuperAdmin = user?.role === 'superadmin';
+
+  const login = async (email: string, password: string, token?: string, asSuperAdmin?: boolean) => {
     setIsLoading(true);
     try {
-      // Validate input to prevent XSS attacks
       if (!isValidInput(email) || !isValidInput(password)) {
         throw new Error("Entrada inválida detectada");
       }
-      
-      // This is a mock login - in a real app, this would call a secure HTTPS API
-      // For now, we'll simulate a successful login with a mock user
+
+      if (asSuperAdmin) {
+        if (email === "admin@denuncieaqui.com" && password === "admin123") {
+          const mockSuperAdmin: User = {
+            id: 'super-1',
+            email,
+            role: 'superadmin',
+            twoFactorEnabled: true,
+            managedCompanies: getMockCompanies()
+          };
+
+          if (mockSuperAdmin.twoFactorEnabled && !token) {
+            setIsLoading(false);
+            throw new Error("Autenticação de dois fatores necessária");
+          }
+
+          const encryptedUserData = encryptData(JSON.stringify(mockSuperAdmin));
+          localStorage.setItem('encrypted_user', encryptedUserData);
+          localStorage.setItem('session_start_time', Date.now().toString());
+
+          console.log(`[LGPD/GDPR Log] Super Admin login: ${Date.now()}`);
+          setUser(mockSuperAdmin);
+          setIsLoading(false);
+          return;
+        } else {
+          throw new Error("Credenciais de Super Admin inválidas");
+        }
+      }
+
       const mockUser: User = {
         id: '1',
         email,
@@ -102,21 +152,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         plan: 'pro',
         twoFactorEnabled: true
       };
-      
-      // If 2FA is enabled, require token
+
       if (mockUser.twoFactorEnabled && !token) {
         setIsLoading(false);
         throw new Error("Autenticação de dois fatores necessária");
       }
-      
-      // Store encrypted user in localStorage for persistence
+
       const encryptedUserData = encryptData(JSON.stringify(mockUser));
       localStorage.setItem('encrypted_user', encryptedUserData);
       localStorage.setItem('session_start_time', Date.now().toString());
-      
-      // Log for LGPD/GDPR compliance
+
       console.log(`[LGPD/GDPR Log] User login: ${Date.now()}`);
-      
       setUser(mockUser);
     } catch (error) {
       console.error('Login failed:', error);
@@ -129,18 +175,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (email: string, password: string, companyName: string) => {
     setIsLoading(true);
     try {
-      // Validate input to prevent XSS attacks
       if (!isValidInput(email) || !isValidInput(password) || !isValidInput(companyName)) {
         throw new Error("Entrada inválida detectada");
       }
-      
-      // Password strength check
+
       if (!isStrongPassword(password)) {
         throw new Error("A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e símbolos");
       }
-      
-      // This is a mock registration - in a real app, this would call a secure HTTPS API
-      // For now, we'll simulate a successful registration with a mock user
+
       const mockUser: User = {
         id: Date.now().toString(),
         email,
@@ -149,15 +191,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         plan: 'free',
         twoFactorEnabled: false
       };
-      
-      // Store encrypted user in localStorage
+
       const encryptedUserData = encryptData(JSON.stringify(mockUser));
       localStorage.setItem('encrypted_user', encryptedUserData);
       localStorage.setItem('session_start_time', Date.now().toString());
-      
-      // Log for LGPD/GDPR compliance
+
       console.log(`[LGPD/GDPR Log] User registration: ${Date.now()}`);
-      
       setUser(mockUser);
     } catch (error) {
       console.error('Registration failed:', error);
@@ -168,42 +207,113 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    // Securely clear user data
     localStorage.removeItem('encrypted_user');
     localStorage.removeItem('session_start_time');
     setUser(null);
-    
-    // Log for LGPD/GDPR compliance
+
     console.log(`[LGPD/GDPR Log] User logout: ${Date.now()}`);
   };
-  
-  // Setup two-factor authentication
+
   const setupTwoFactor = async (): Promise<string> => {
-    // In a real app, this would generate a QR code or backup codes
-    // For this mock implementation, return a fake secret key
     return "ABCDE12345";
   };
-  
-  // Verify two-factor authentication token
+
   const verifyTwoFactor = async (token: string): Promise<boolean> => {
-    // Mock implementation - in a real app, this would verify the token
     return token.length === 6 && /^\d+$/.test(token);
   };
-  
-  // Input validation to prevent XSS
+
   const isValidInput = (input: string): boolean => {
-    // Basic XSS prevention - would be more sophisticated in a real app
     return !/<script|onerror|javascript:/i.test(input);
   };
-  
-  // Password strength checker
+
   const isStrongPassword = (password: string): boolean => {
-    // Requires at least 8 chars, with uppercase, lowercase, number and special char
     return password.length >= 8 && 
            /[A-Z]/.test(password) && 
            /[a-z]/.test(password) && 
            /[0-9]/.test(password) && 
            /[^A-Za-z0-9]/.test(password);
+  };
+
+  const getMockCompanies = (): Company[] => {
+    return [
+      {
+        id: 'company-1',
+        name: 'Empresa Exemplo A',
+        domain: 'empresaa',
+        customDomain: 'denuncias.empresaa.com.br',
+        active: true,
+        plan: 'enterprise',
+        createdAt: new Date(2023, 1, 15).toISOString(),
+        settings: {
+          logoUrl: '/logos/company-a.png',
+          primaryColor: '#004D99',
+          welcomeMessage: 'Bem-vindo ao canal de denúncias da Empresa A',
+          privacyPolicy: 'Política de privacidade personalizada...',
+          reportCategories: ['Assédio', 'Fraude', 'Corrupção', 'Discriminação'],
+          dataRetentionPeriod: 730,
+          requiresAnonymity: true
+        }
+      },
+      {
+        id: 'company-2',
+        name: 'Corporação B',
+        domain: 'corpb',
+        active: true,
+        plan: 'pro',
+        createdAt: new Date(2023, 5, 20).toISOString(),
+        settings: {
+          primaryColor: '#2E7D32',
+          reportCategories: ['Assédio Moral', 'Assédio Sexual', 'Violação de Compliance'],
+          dataRetentionPeriod: 365,
+          requiresAnonymity: false
+        }
+      },
+      {
+        id: 'company-3',
+        name: 'Startup C',
+        domain: 'startupc',
+        active: false,
+        plan: 'free',
+        createdAt: new Date(2023, 8, 5).toISOString(),
+        settings: {
+          reportCategories: ['Conduta Inapropriada', 'Questões Éticas'],
+          dataRetentionPeriod: 180,
+          requiresAnonymity: true
+        }
+      }
+    ];
+  };
+
+  const createCompany = async (companyData: Omit<Company, 'id' | 'createdAt'>): Promise<Company> => {
+    const newCompany: Company = {
+      ...companyData,
+      id: `company-${Date.now()}`,
+      createdAt: new Date().toISOString()
+    };
+
+    console.log(`[LGPD/GDPR Log] Company created: ${newCompany.id} at ${Date.now()}`);
+    return newCompany;
+  };
+
+  const updateCompanySettings = async (companyId: string, settings: Partial<CompanySettings>): Promise<void> => {
+    console.log(`[LGPD/GDPR Log] Company settings updated: ${companyId} at ${Date.now()}`);
+  };
+
+  const getCompanies = async (): Promise<Company[]> => {
+    return getMockCompanies();
+  };
+
+  const getCompanyById = async (id: string): Promise<Company | null> => {
+    const companies = getMockCompanies();
+    return companies.find(company => company.id === id) || null;
+  };
+
+  const activateCompany = async (id: string): Promise<void> => {
+    console.log(`[LGPD/GDPR Log] Company activated: ${id} at ${Date.now()}`);
+  };
+
+  const deactivateCompany = async (id: string): Promise<void> => {
+    console.log(`[LGPD/GDPR Log] Company deactivated: ${id} at ${Date.now()}`);
   };
 
   return (
@@ -212,6 +322,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         isAuthenticated: !!user,
         isLoading,
+        isSuperAdmin,
         login,
         register,
         logout,
@@ -221,7 +332,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         decryptData,
         gdprConsent,
         setGdprConsent,
-        dataRetentionPeriod
+        dataRetentionPeriod,
+        createCompany,
+        updateCompanySettings,
+        getCompanies,
+        getCompanyById,
+        activateCompany,
+        deactivateCompany
       }}
     >
       {children}

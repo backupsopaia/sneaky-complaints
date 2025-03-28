@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import ReportForm from "./pages/ReportForm";
 import ReportDetails from "./pages/ReportDetails";
 import CheckStatus from "./pages/CheckStatus";
@@ -27,7 +28,7 @@ const AnimatedRoutes = () => {
   const isMobile = useIsMobile();
   
   // Determine if footer should be shown (hide on login, dashboard, and on mobile)
-  const showFooter = !isMobile && !['/dashboard', '/login'].includes(location.pathname);
+  const showFooter = !isMobile && !['/dashboard', '/login', '/admin-dashboard'].includes(location.pathname);
   
   // Apply stored theme on initial load
   useEffect(() => {
@@ -50,13 +51,14 @@ const AnimatedRoutes = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 5 }}
           transition={{ duration: 0.2 }}
-          className={!['/login', '/dashboard'].includes(location.pathname) ? 'has-bottom-nav pb-16 md:pb-0' : ''}
+          className={!['/login', '/dashboard', '/admin-dashboard'].includes(location.pathname) ? 'has-bottom-nav pb-16 md:pb-0' : ''}
         >
           <Routes location={location}>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/report" element={<ReportForm />} />
             <Route path="/report/:id" element={<ReportDetails />} />
             <Route path="/check-status" element={<CheckStatus />} />

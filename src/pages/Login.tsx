@@ -8,7 +8,8 @@ import { useAuth } from '@/context/AuthContext';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Shield } from "lucide-react";
+import { Shield, Building } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,15 +17,24 @@ const Login = () => {
   const { login } = useAuth();
   const [showTwoFactor, setShowTwoFactor] = useState(false);
   const [twoFactorCode, setTwoFactorCode] = useState("");
-  const [loginData, setLoginData] = useState<{email: string, password: string}>({ email: "", password: "" });
+  const [loginData, setLoginData] = useState<{email: string, password: string, isSuperAdmin?: boolean}>({ 
+    email: "", 
+    password: "",
+    isSuperAdmin: false
+  });
+  const [loginType, setLoginType] = useState<'company' | 'admin'>('company');
 
   const handleLogin = async (data: any) => {
     try {
-      setLoginData({ email: data.email, password: data.password });
+      setLoginData({ 
+        email: data.email, 
+        password: data.password,
+        isSuperAdmin: loginType === 'admin'
+      });
       
       try {
         // First attempt without 2FA token
-        await login(data.email, data.password);
+        await login(data.email, data.password, undefined, loginType === 'admin');
         completeLogin();
       } catch (error: any) {
         // If 2FA is required
@@ -45,7 +55,7 @@ const Login = () => {
   
   const handleTwoFactorSubmit = async () => {
     try {
-      await login(loginData.email, loginData.password, twoFactorCode);
+      await login(loginData.email, loginData.password, twoFactorCode, loginData.isSuperAdmin);
       completeLogin();
     } catch (error) {
       toast({
@@ -62,7 +72,13 @@ const Login = () => {
       title: "Login bem-sucedido",
       description: "Você foi autenticado com sucesso.",
     });
-    navigate('/dashboard');
+    
+    // Redirect based on user type
+    if (loginType === 'admin') {
+      navigate('/admin-dashboard');
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -70,7 +86,37 @@ const Login = () => {
       <Navbar />
       
       <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900">
-        <AuthForm type="login" onSubmit={handleLogin} />
+        <div className="w-full max-w-md">
+          <Tabs defaultValue="company" onValueChange={(value) => setLoginType(value as 'company' | 'admin')}>
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="company" className="flex items-center gap-2">
+                <Building className="h-4 w-4" />
+                Empresa
+              </TabsTrigger>
+              <TabsTrigger value="admin" className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Administração Central
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="company">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h2 className="text-xl font-bold mb-4 text-center">Login - Portal da Empresa</h2>
+                <AuthForm type="login" onSubmit={handleLogin} />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="admin">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h2 className="text-xl font-bold mb-4 text-center">Login - Administração Central</h2>
+                <p className="text-sm text-gray-500 mb-4 text-center">
+                  Acesso restrito para administradores da plataforma.
+                </p>
+                <AuthForm type="login" onSubmit={handleLogin} />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
         
         <Dialog open={showTwoFactor} onOpenChange={setShowTwoFactor}>
           <DialogContent className="sm:max-w-md">
