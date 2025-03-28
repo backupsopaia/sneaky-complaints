@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, MessageSquare, Eye, Calendar, Tag, X } from "lucide-react";
+import { Search, Filter, MessageSquare, Eye, Tag, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -37,7 +36,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-// Mock data for the reports
 const mockReports = [
   {
     id: '1',
@@ -100,7 +98,6 @@ const ReportsList = ({ className }: ReportsListProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   
-  // Filtros
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [dateFromFilter, setDateFromFilter] = useState<Date | undefined>(undefined);
@@ -125,42 +122,27 @@ const ReportsList = ({ className }: ReportsListProps) => {
     { value: 'Corrupção', label: 'Corrupção' },
   ];
   
-  // Filter reports based on all filters
   const filteredReports = mockReports.filter(report => {
-    // Status filter
     if (statusFilter !== 'all' && report.status !== statusFilter) return false;
-    
-    // Category filter
     if (categoryFilter !== 'all' && report.category !== categoryFilter) return false;
-    
-    // Date range filter
     if (dateFromFilter) {
       const reportDate = new Date(report.date);
       if (reportDate < dateFromFilter) return false;
     }
-    
     if (dateToFilter) {
       const reportDate = new Date(report.date);
-      // Add one day to include the end date
       const endDate = new Date(dateToFilter);
       endDate.setDate(endDate.getDate() + 1);
       if (reportDate > endDate) return false;
     }
-    
-    // Evidence filter
     if (hasEvidenceFilter === 'with' && report.evidence.length === 0) return false;
     if (hasEvidenceFilter === 'without' && report.evidence.length > 0) return false;
-    
-    // Messages filter
     if (hasMessagesFilter === 'with' && report.unreadMessages === 0) return false;
     if (hasMessagesFilter === 'without' && report.unreadMessages > 0) return false;
-    
-    // Search term
     const matchesSearch = 
       report.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.trackingCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.id.includes(searchTerm);
-    
     return matchesSearch;
   });
   
@@ -312,6 +294,7 @@ const ReportsList = ({ className }: ReportsListProps) => {
                       selected={dateFromFilter}
                       onSelect={setDateFromFilter}
                       locale={ptBR}
+                      className="pointer-events-auto"
                     />
                   </PopoverContent>
                 </Popover>
@@ -339,6 +322,7 @@ const ReportsList = ({ className }: ReportsListProps) => {
                       selected={dateToFilter}
                       onSelect={setDateToFilter}
                       locale={ptBR}
+                      className="pointer-events-auto"
                     />
                   </PopoverContent>
                 </Popover>
