@@ -97,3 +97,30 @@
 .hero-gradient {
   background: linear-gradient(to right, hsl(221, 83%, 53%, 0.8), hsl(217, 91%, 60%, 0.8));
 }
+
+/* Glassmorphism styles */
+.glass {
+  @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl;
+}
+
+.dark .glass {
+  @apply bg-black/30 border-white/10;
+}
+
+/* Mobile App-like styles */
+.mobile-container {
+  @apply max-w-md mx-auto h-full overflow-hidden;
+}
+
+.page-transition {
+  @apply animate-fade-in;
+}
+
+.touch-action {
+  @apply active:opacity-70 transition-opacity duration-150;
+}
+
+/* Fixed padding for content to account for bottom navigation */
+.has-bottom-nav {
+  @apply pb-16 md:pb-0;
+}
