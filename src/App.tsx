@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+
+import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from "@/components/ui/toaster";
 import { useTheme } from '@/context/theme/useTheme';
@@ -17,12 +18,12 @@ import NotFound from '@/pages/NotFound';
 const App = () => {
   const { theme } = useTheme();
 
-  useEffect(() => {
+  React.useEffect(() => {
     document.body.className = theme;
   }, [theme]);
 
   return (
-    <div className="App">
+    <div className={`App ${theme}`}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
