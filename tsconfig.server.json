@@ -20,6 +20,5 @@
     }
   },
   "include": ["src/server/**/*"],
-  "exclude": ["node_modules"],
-  "references": []
+  "exclude": ["node_modules"]
 }
