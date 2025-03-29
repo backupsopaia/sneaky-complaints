@@ -1,8 +1,10 @@
+
 import React from 'react';
 import PricingTable from '@/components/PricingTable';
 import HeroSection from '@/components/landing/HeroSection';
 import TrustedBySection from '@/components/landing/TrustedBySection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
+import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import CtaSection from '@/components/landing/CtaSection';
 import FaqSection from '@/components/landing/FaqSection';
 
@@ -13,6 +15,7 @@ const Index = () => {
         <HeroSection />
         <TrustedBySection />
         <FeaturesSection />
+        <TestimonialsSection />
         <CtaSection />
         <PricingTable />
         <FaqSection />
