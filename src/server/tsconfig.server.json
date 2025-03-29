@@ -8,7 +8,11 @@
     "esModuleInterop": true,
     "outDir": "../../dist-server",
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
   },
   "include": ["./**/*.ts"],
   "exclude": ["node_modules"]
