@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -43,7 +42,7 @@ const ReportFormContent = ({
   handleSubmit
 }: ReportFormContentProps) => {
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+    <form onSubmit={handleSubmit} className="bg-white/50 dark:bg-gray-900/50 p-6 rounded-lg shadow-md backdrop-blur-lg">
       <IdentificationSection 
         isAnonymous={isAnonymous}
         setIsAnonymous={setIsAnonymous}
@@ -69,7 +68,7 @@ const ReportFormContent = ({
             }
             required
           />
-          <Label htmlFor="acceptTerms" className="text-sm text-gray-600">
+          <Label htmlFor="acceptTerms" className="text-sm text-gray-500 dark:text-gray-400">
             Declaro que as informações fornecidas são verdadeiras e estou ciente das responsabilidades legais em caso de falsidade.
             Concordo com a <Link to="#" className="text-primary hover:underline">Política de Privacidade</Link>.
           </Label>
@@ -80,7 +79,7 @@ const ReportFormContent = ({
         <Button type="submit" size="lg">
           Enviar Denúncia
         </Button>
-        <p className="text-sm text-center text-gray-500">
+        <p className="text-sm text-center text-gray-500 dark:text-gray-400">
           Ao enviar, você receberá um número de protocolo para acompanhar o andamento.
         </p>
       </div>

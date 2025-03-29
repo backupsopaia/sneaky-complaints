@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 import { Link } from 'react-router-dom';
 
 const PricingTable = () => {
@@ -9,10 +8,16 @@ const PricingTable = () => {
     <div className="container mx-auto px-4 py-16" id="pricing">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold mb-4">Planos transparentes, sem surpresas</h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
           Escolha o plano que melhor se adapta às necessidades da sua empresa, 
           com recursos essenciais de compliance e gestão de denúncias.
         </p>
+        <Link to="/pricing">
+          <Button variant="outline" className="group">
+            Ver Todos os Planos
+            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+          </Button>
+        </Link>
       </div>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">

@@ -1,11 +1,10 @@
-
-import React, { createContext, useState, useEffect } from 'react';
-import { User } from '../../types/auth';
-import { encryptData, decryptData } from '../../utils/authUtils';
-import { 
-  DATA_RETENTION_PERIOD, 
-  handleUserLogin, 
-  handleUserRegistration, 
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authService } from '@/services/authService';
+import { AuthContextType, User, Company, LoginCredentials, RegisterData } from '@/types/auth';
+import {
+  DATA_RETENTION_PERIOD,
+  handleUserLogin,
+  handleUserRegistration,
   handleLogout,
   setupTwoFactorAuth,
   verifyTwoFactorToken,
@@ -14,71 +13,119 @@ import {
 import { createCompany, updateCompanySettings, getCompanies, getCompanyById, activateCompany, deactivateCompany } from '../../services/companyService';
 import { AuthContextProps } from './types';
 
-export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [company, setCompany] = useState<Company | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [gdprConsent, setGdprConsent] = useState(false);
   const dataRetentionPeriod = DATA_RETENTION_PERIOD;
 
   useEffect(() => {
-    const checkAuth = () => {
+    const initAuth = async () => {
       try {
-        const encryptedUser = localStorage.getItem('encrypted_user');
-        const checkedUser = performSessionCheck(encryptedUser, dataRetentionPeriod);
-        setUser(checkedUser);
+        if (authService.isAuthenticated()) {
+          await getCurrentUser();
+        }
+      } catch (error) {
+        console.error('Erro ao inicializar autenticação:', error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
-    checkAuth();
+    initAuth();
   }, []);
 
   const isSuperAdmin = user?.role === 'superadmin';
 
-  const login = async (email: string, password: string, token?: string, asSuperAdmin?: boolean) => {
-    setIsLoading(true);
+  const login = async (credentials: LoginCredentials) => {
     try {
-      const authenticatedUser = await handleUserLogin(email, password, token, asSuperAdmin);
-      
-      const encryptedUserData = encryptData(JSON.stringify(authenticatedUser));
-      localStorage.setItem('encrypted_user', encryptedUserData);
-      localStorage.setItem('session_start_time', Date.now().toString());
+      setLoading(true);
+      setError(null);
+      const { user, token } = await authService.login(credentials);
+      setUser(user);
 
-      console.log(`[LGPD/GDPR Log] User login: ${Date.now()}`);
-      setUser(authenticatedUser);
+      // Carregar informações da empresa
+      if (user.companyId) {
+        const companies = await authService.getCompanies();
+        const userCompany = companies.find(c => c.id === user.companyId);
+        if (userCompany) {
+          setCompany(userCompany);
+        }
+      }
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Erro ao fazer login:', error);
+      setError('Erro ao fazer login. Verifique suas credenciais.');
       throw error;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const register = async (email: string, password: string, companyName: string) => {
-    setIsLoading(true);
+  const register = async (data: RegisterData) => {
     try {
-      const registeredUser = await handleUserRegistration(email, password, companyName);
-      
-      const encryptedUserData = encryptData(JSON.stringify(registeredUser));
-      localStorage.setItem('encrypted_user', encryptedUserData);
-      localStorage.setItem('session_start_time', Date.now().toString());
+      setLoading(true);
+      setError(null);
+      const { user, token } = await authService.register(data);
+      setUser(user);
 
-      console.log(`[LGPD/GDPR Log] User registration: ${Date.now()}`);
-      setUser(registeredUser);
+      // Carregar informações da empresa
+      if (user.companyId) {
+        const companies = await authService.getCompanies();
+        const userCompany = companies.find(c => c.id === user.companyId);
+        if (userCompany) {
+          setCompany(userCompany);
+        }
+      }
     } catch (error) {
-      console.error('Registration failed:', error);
+      console.error('Erro ao registrar:', error);
+      setError('Erro ao registrar. Tente novamente.');
       throw error;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const logout = () => {
-    handleLogout();
+  const logout = async () => {
+    try {
+      setLoading(true);
+      await authService.logout();
     setUser(null);
+      setCompany(null);
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+      setError('Erro ao fazer logout.');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getCurrentUser = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const user = await authService.getCurrentUser();
+      setUser(user);
+
+      // Carregar informações da empresa
+      if (user.companyId) {
+        const companies = await authService.getCompanies();
+        const userCompany = companies.find(c => c.id === user.companyId);
+        if (userCompany) {
+          setCompany(userCompany);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao obter usuário atual:', error);
+      setError('Erro ao obter informações do usuário.');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const setupTwoFactor = async (): Promise<string> => {
@@ -89,20 +136,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return verifyTwoFactorToken(token);
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
+  const value = {
         user,
-        isAuthenticated: !!user,
-        isLoading,
-        isSuperAdmin,
+    company,
+    loading,
+    error,
         login,
         register,
         logout,
+    getCurrentUser,
         setupTwoFactor,
         verifyTwoFactor,
-        encryptData,
-        decryptData,
         gdprConsent,
         setGdprConsent,
         dataRetentionPeriod,
@@ -112,9 +156,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         getCompanyById,
         activateCompany,
         deactivateCompany
-      }}
-    >
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
+  }
+  return context;
 };

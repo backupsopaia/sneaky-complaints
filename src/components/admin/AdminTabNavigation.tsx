@@ -1,62 +1,40 @@
+import React from 'react';
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LucideIcon } from 'lucide-react';
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Building, FileText, Settings, Layout } from "lucide-react";
+interface TabItem {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+}
 
 interface AdminTabNavigationProps {
   activeTab: string;
+  onTabChange: (value: string) => void;
+  tabs: TabItem[];
 }
 
-const AdminTabNavigation = ({ activeTab }: AdminTabNavigationProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleTabChange = (value: string) => {
-    if (value === "companies") {
-      navigate("/admin-dashboard");
-    } else if (value === "reports") {
-      navigate("/admin-dashboard?tab=reports");
-    } else if (value === "settings") {
-      navigate("/admin-dashboard?tab=settings");
-    } else if (value === "content") {
-      navigate("/content-management");
-    }
-  };
-
+const AdminTabNavigation: React.FC<AdminTabNavigationProps> = ({
+  activeTab,
+  onTabChange,
+  tabs
+}) => {
   return (
-    <TabsList className="w-full grid grid-cols-2 md:grid-cols-4 mb-8">
-      <TabsTrigger 
-        value="companies" 
-        onClick={() => handleTabChange("companies")}
-        className={activeTab === "companies" ? "data-[state=active]:bg-primary/20" : ""}
-      >
-        <Building className="w-4 h-4 mr-2" />
-        Empresas
-      </TabsTrigger>
-      <TabsTrigger 
-        value="reports" 
-        onClick={() => handleTabChange("reports")}
-        className={activeTab === "reports" ? "data-[state=active]:bg-primary/20" : ""}
-      >
-        <FileText className="w-4 h-4 mr-2" />
-        Relatórios
-      </TabsTrigger>
-      <TabsTrigger 
-        value="content" 
-        onClick={() => handleTabChange("content")}
-        className={activeTab === "content" ? "data-[state=active]:bg-primary/20" : ""}
-      >
-        <Layout className="w-4 h-4 mr-2" />
-        Conteúdo
-      </TabsTrigger>
-      <TabsTrigger 
-        value="settings" 
-        onClick={() => handleTabChange("settings")}
-        className={activeTab === "settings" ? "data-[state=active]:bg-primary/20" : ""}
-      >
-        <Settings className="w-4 h-4 mr-2" />
-        Configurações
-      </TabsTrigger>
+    <TabsList className="grid grid-cols-7 h-auto p-1">
+      {tabs.map((tab) => {
+        const Icon = tab.icon;
+        return (
+          <TabsTrigger
+            key={tab.id}
+            value={tab.id}
+            className="flex items-center gap-2 py-2"
+            onClick={() => onTabChange(tab.id)}
+          >
+            <Icon className="h-4 w-4" />
+            <span>{tab.label}</span>
+          </TabsTrigger>
+        );
+      })}
     </TabsList>
   );
 };

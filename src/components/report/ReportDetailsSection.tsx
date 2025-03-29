@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -34,15 +33,15 @@ const ReportDetailsSection = ({
 }: ReportDetailsSectionProps) => {
   return (
     <div className="mb-6 space-y-4">
-      <h3 className="text-lg font-medium mb-2">Detalhes da Denúncia</h3>
+      <h3 className="text-lg font-medium mb-2 text-gray-900 dark:text-gray-100">Detalhes da Denúncia</h3>
       
       <div>
-        <Label htmlFor="category">Categoria</Label>
+        <Label htmlFor="category" className="text-gray-700 dark:text-gray-300">Categoria</Label>
         <Select 
           onValueChange={(value) => handleSelectChange('category', value)}
           value={reportData.category}
         >
-          <SelectTrigger id="category">
+          <SelectTrigger id="category" className="bg-white/50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700">
             <SelectValue placeholder="Selecione uma categoria" />
           </SelectTrigger>
           <SelectContent>
@@ -58,48 +57,51 @@ const ReportDetailsSection = ({
       </div>
       
       <div>
-        <Label htmlFor="description">Descrição Detalhada</Label>
+        <Label htmlFor="description" className="text-gray-700 dark:text-gray-300">Descrição Detalhada</Label>
         <Textarea
           id="description"
           name="description"
           placeholder="Descreva a situação com o máximo de detalhes possível"
           value={reportData.description}
           onChange={handleInputChange}
-          className="min-h-[120px]"
+          className="min-h-[120px] bg-white/50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700"
           required
         />
       </div>
       
       <div>
-        <Label htmlFor="date">Data da Ocorrência</Label>
+        <Label htmlFor="date" className="text-gray-700 dark:text-gray-300">Data da Ocorrência</Label>
         <Input
           id="date"
           name="date"
           type="date"
           value={reportData.date}
           onChange={handleInputChange}
+          className="bg-white/50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700"
         />
       </div>
       
       <div>
-        <Label htmlFor="location">Local</Label>
+        <Label htmlFor="location" className="text-gray-700 dark:text-gray-300">Local</Label>
         <Input
           id="location"
           name="location"
           placeholder="Departamento, unidade, local físico, etc."
           value={reportData.location}
           onChange={handleInputChange}
+          className="bg-white/50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700"
         />
       </div>
       
       <div>
-        <Label htmlFor="involvedPeople">Pessoas Envolvidas</Label>
+        <Label htmlFor="involvedPeople" className="text-gray-700 dark:text-gray-300">Pessoas Envolvidas</Label>
         <Textarea
           id="involvedPeople"
           name="involvedPeople"
           placeholder="Quem são as pessoas envolvidas? (nomes, cargos, etc.)"
           value={reportData.involvedPeople}
           onChange={handleInputChange}
+          className="bg-white/50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700"
         />
       </div>
       
@@ -112,26 +114,27 @@ const ReportDetailsSection = ({
               handleCheckboxChange('hasEvidence', checked as boolean)
             }
           />
-          <Label htmlFor="hasEvidence">
+          <Label htmlFor="hasEvidence" className="text-gray-700 dark:text-gray-300">
             Possuo evidências que comprovam esta denúncia
           </Label>
         </div>
         
         {reportData.hasEvidence && (
-          <div className="space-y-4 mt-4 p-4 border rounded-md bg-gray-50">
+          <div className="space-y-4 mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-white/30 dark:bg-gray-900/30 backdrop-blur-lg">
             <div>
-              <Label htmlFor="evidenceDescription">Descreva as Evidências</Label>
+              <Label htmlFor="evidenceDescription" className="text-gray-700 dark:text-gray-300">Descreva as Evidências</Label>
               <Textarea
                 id="evidenceDescription"
                 name="evidenceDescription"
                 placeholder="Descreva quais evidências você possui (documentos, e-mails, fotos, etc.)"
                 value={reportData.evidenceDescription}
                 onChange={handleInputChange}
+                className="bg-white/50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700"
               />
             </div>
             
             <div>
-              <Label className="mb-2 block">Upload de Evidências</Label>
+              <Label className="mb-2 block text-gray-700 dark:text-gray-300">Upload de Evidências</Label>
               <FileUploader 
                 onFilesSelected={handleFileChange}
                 currentFiles={reportData.files}
@@ -139,7 +142,7 @@ const ReportDetailsSection = ({
                 maxSizeInMB={10}
                 acceptedFileTypes=".jpg,.jpeg,.png,.pdf,.mp3,.mp4,.doc,.docx"
               />
-              <div className="mt-3 text-xs text-gray-500 space-y-1">
+              <div className="mt-3 text-xs text-gray-500 dark:text-gray-400 space-y-1">
                 <p>Formatos aceitos: PDF, Word, JPG, PNG, MP3, MP4</p>
                 <p>Tamanho máximo: 10MB por arquivo, 5 arquivos no total</p>
                 <p className="text-primary/80 font-medium">

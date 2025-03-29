@@ -1,4 +1,3 @@
-
 export interface ContentSection {
   title: string;
   subtitle: string;
@@ -9,9 +8,8 @@ export interface ContentSection {
 
 export interface MenuItem {
   id: string;
-  label: string;
-  url: string;
-  icon?: string;
+  name: string;
+  href: string;
 }
 
 export interface FooterSection {
@@ -30,21 +28,20 @@ export interface FooterSection {
   };
 }
 
+export interface HomepageContent {
+  title: string;
+  subtitle: string;
+  bodyText: string;
+  bannerImage: string;
+}
+
 export interface SiteContent {
-  homepage: ContentSection;
-  login: ContentSection;
-  dashboard: ContentSection;
+  homepage: HomepageContent;
   navigation: MenuItem[];
   footer: FooterSection;
 }
 
 export interface ContentContextType {
   content: SiteContent;
-  updateContent: (section: keyof SiteContent, data: Partial<ContentSection | MenuItem[] | FooterSection>) => void;
-  addMenuItem: (section: 'navigation' | 'product' | 'company' | 'legal', item: Omit<MenuItem, 'id'>) => void;
-  removeMenuItem: (section: 'navigation' | 'product' | 'company' | 'legal', itemId: string) => void;
-  updateMenuItem: (section: 'navigation' | 'product' | 'company' | 'legal', itemId: string, data: Partial<MenuItem>) => void;
-  updateSocialLink: (platform: keyof FooterSection['socialLinks'], url: string) => void;
-  updateFooterText: (field: 'companyDescription' | 'copyright', text: string) => void;
-  isLoading: boolean;
+  updateContent: (newContent: Partial<SiteContent>) => void;
 }

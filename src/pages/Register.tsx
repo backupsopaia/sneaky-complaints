@@ -1,9 +1,7 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
 import AuthForm from '@/components/AuthForm';
-import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/context/auth/useAuth';
 
@@ -45,24 +43,24 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
-      
-      <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-md w-full">
-          {plan && (
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
-              <p className="text-blue-800 font-medium">
-                Você escolheu o plano {plan === 'free' ? 'Gratuito' : plan === 'pro' ? 'Profissional' : 'Empresarial'}
-              </p>
-              <p className="text-sm text-blue-600 mt-1">
-                Você poderá alterar seu plano a qualquer momento após o registro.
-              </p>
-            </div>
-          )}
-          
-          <AuthForm type="register" onSubmit={handleRegister} />
+      <main className="flex-grow flex flex-col">
+        <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+          <div className="max-w-md w-full">
+            {plan && (
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
+                <p className="text-blue-800 font-medium">
+                  Você escolheu o plano {plan === 'free' ? 'Gratuito' : plan === 'pro' ? 'Profissional' : 'Empresarial'}
+                </p>
+                <p className="text-sm text-blue-600 mt-1">
+                  Você poderá alterar seu plano a qualquer momento após o registro.
+                </p>
+              </div>
+            )}
+            
+            <AuthForm type="register" onSubmit={handleRegister} />
+          </div>
         </div>
-      </div>
+      </main>
       
       <Footer />
     </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { FileIcon, XIcon, Image, FileText, Music, Video, Lock, File, AlertCircle } from "lucide-react";
@@ -162,9 +161,10 @@ export const FileUploader = ({
     <div className="space-y-4">
       <div 
         className={cn(
-          "border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:bg-gray-50 transition-colors",
-          isDragging ? "border-primary bg-primary/5" : "border-gray-300",
-          error ? "border-red-300" : ""
+          "border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors",
+          isDragging ? "border-primary bg-primary/5" : "border-gray-300 dark:border-gray-600",
+          error ? "border-red-300 dark:border-red-500" : "",
+          "hover:bg-gray-50 dark:hover:bg-gray-800/50"
         )}
         onClick={() => fileInputRef.current?.click()}
         onDragOver={handleDragOver}
@@ -172,13 +172,13 @@ export const FileUploader = ({
         onDrop={handleDrop}
       >
         <div className="flex flex-col items-center">
-          <div className="mb-3 p-2 bg-primary/10 rounded-full">
+          <div className="mb-3 p-2 bg-primary/10 dark:bg-primary/20 rounded-full">
             <FileIcon className="h-6 w-6 text-primary" />
           </div>
-          <p className="text-sm font-medium mb-1">
+          <p className="text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
             Arraste e solte arquivos ou clique para selecionar
           </p>
-          <p className="text-xs text-gray-500 flex items-center gap-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
             <Lock className="h-3 w-3" /> Upload seguro e criptografado
           </p>
           <input
@@ -198,54 +198,40 @@ export const FileUploader = ({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="flex items-start gap-2 text-sm p-3 bg-red-50 text-red-700 rounded-md"
+            className="flex items-center gap-2 p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-md"
           >
-            <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
-            <p>{error}</p>
+            <AlertCircle className="h-4 w-4" />
+            {error}
           </motion.div>
         )}
       </AnimatePresence>
       
       {currentFiles.length > 0 && (
-        <div>
-          <p className="text-sm font-medium mb-2">Arquivos selecionados ({currentFiles.length}/{maxFiles}):</p>
-          <div className="space-y-2">
-            <AnimatePresence initial={false}>
-              {currentFiles.map((file, index) => (
-                <motion.div
-                  key={`${file.name}-${index}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-center justify-between bg-gray-50 p-3 rounded border text-sm"
-                >
-                  <div className="flex items-center space-x-3 truncate">
-                    <div className="p-1.5 bg-white rounded border">
-                      {getIconForFile(file)}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate font-medium max-w-[200px]">{file.name}</p>
-                      <p className="text-gray-500 text-xs">
-                        {(file.size / (1024 * 1024)).toFixed(2)} MB
-                      </p>
-                    </div>
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-8 w-8 p-0 rounded-full hover:bg-red-50 hover:text-red-600 transition-colors" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeFile(index);
-                    }}
-                  >
-                    <XIcon className="h-4 w-4" />
-                  </Button>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
+        <div className="space-y-2">
+          {currentFiles.map((file, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md"
+            >
+              <div className="flex items-center gap-3">
+                {getIconForFile(file)}
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{file.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {(file.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => removeFile(index)}
+                className="h-8 w-8 text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400"
+              >
+                <XIcon className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
         </div>
       )}
     </div>

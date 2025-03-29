@@ -1,8 +1,6 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
-import Navbar from '@/components/Navbar';
 import { useAuth } from '@/context/auth/useAuth';
 import TwoFactorModal from '@/components/auth/TwoFactorModal';
 import LoginTabs from '@/components/auth/LoginTabs';
@@ -99,21 +97,21 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
-      
-      <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900">
-        <div className="w-full max-w-md">
-          <LoginTabs 
-            loginType={loginType}
-            setLoginType={setLoginType}
-            handleLogin={handleLogin}
-            fillCompanyCredentials={fillCompanyCredentials}
-            fillAdminCredentials={fillAdminCredentials}
-          />
+      <main className="flex-grow">
+        <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900">
+          <div className="w-full max-w-md">
+            <LoginTabs 
+              loginType={loginType}
+              setLoginType={setLoginType}
+              handleLogin={handleLogin}
+              fillCompanyCredentials={fillCompanyCredentials}
+              fillAdminCredentials={fillAdminCredentials}
+            />
+          </div>
+          
+          <TwoFactorModal />
         </div>
-        
-        <TwoFactorModal />
-      </div>
+      </main>
     </div>
   );
 };

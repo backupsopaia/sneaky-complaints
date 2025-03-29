@@ -1,46 +1,45 @@
-
 import React from 'react';
-import { Text, Image, Bell } from 'lucide-react';
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { 
+  LayoutDashboard, 
+  Home, 
+  LogIn, 
+  Palette 
+} from 'lucide-react';
 
 interface ContentNavigationProps {
-  section: string;
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
+  activeSection: string;
+  onSectionChange: (section: string) => void;
 }
 
-const ContentNavigation: React.FC<ContentNavigationProps> = ({ 
-  section, 
-  activeTab, 
-  setActiveTab 
+const sections = [
+  { id: 'homepage', label: 'Página Inicial', icon: Home },
+  { id: 'login', label: 'Página de Login', icon: LogIn },
+  { id: 'dashboard', label: 'Painel de Controlo', icon: LayoutDashboard },
+  { id: 'branding', label: 'Marca', icon: Palette }
+];
+
+const ContentNavigation: React.FC<ContentNavigationProps> = ({
+  activeSection,
+  onSectionChange
 }) => {
   return (
-    <TabsList className="grid grid-cols-3 w-full max-w-md">
-      <TabsTrigger 
-        value="text"
-        onClick={() => setActiveTab('text')}
-        className="flex items-center gap-2"
-      >
-        <Text className="h-4 w-4" />
-        <span>Textos</span>
-      </TabsTrigger>
-      <TabsTrigger 
-        value="images"
-        onClick={() => setActiveTab('images')}
-        className="flex items-center gap-2"
-      >
-        <Image className="h-4 w-4" />
-        <span>Imagens</span>
-      </TabsTrigger>
-      <TabsTrigger 
-        value="notifications"
-        onClick={() => setActiveTab('notifications')}
-        className="flex items-center gap-2"
-      >
-        <Bell className="h-4 w-4" />
-        <span>Notificações</span>
-      </TabsTrigger>
-    </TabsList>
+    <div className="flex flex-col space-y-1">
+      {sections.map((section) => {
+        const Icon = section.icon;
+        return (
+          <Button
+            key={section.id}
+            variant={activeSection === section.id ? "default" : "ghost"}
+            className="w-full justify-start"
+            onClick={() => onSectionChange(section.id)}
+          >
+            <Icon className="h-4 w-4 mr-2" />
+            {section.label}
+          </Button>
+        );
+      })}
+    </div>
   );
 };
 

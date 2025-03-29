@@ -1,69 +1,125 @@
-# Welcome to your Lovable project
+# Sneaky Complaints
 
-## Project info
+Sistema de gerenciamento de denúncias com suporte a múltiplas empresas, cada uma com seu próprio banco de dados PostgreSQL.
 
-**URL**: https://lovable.dev/projects/27f144e7-0d9f-430d-b6e2-4c63092a7bc2
+## 🚀 Funcionalidades
 
-## How can I edit this code?
+- Autenticação e autorização de usuários
+- Gerenciamento de empresas
+- Banco de dados isolado por empresa
+- Backup automático dos bancos de dados
+- Painel administrativo
+- Métricas de desempenho
+- Interface moderna e responsiva
 
-There are several ways of editing your application.
+## 🛠️ Tecnologias
 
-**Use Lovable**
+- Frontend:
+  - React
+  - TypeScript
+  - Vite
+  - Tailwind CSS
+  - Shadcn UI
+  - React Query
+  - React Router
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/27f144e7-0d9f-430d-b6e2-4c63092a7bc2) and start prompting.
+- Backend:
+  - Node.js
+  - Express
+  - TypeScript
+  - PostgreSQL
+  - JWT
+  - bcrypt
 
-Changes made via Lovable will be committed automatically to this repo.
+## 📋 Pré-requisitos
 
-**Use your preferred IDE**
+- Node.js 18+
+- PostgreSQL 14+
+- npm ou yarn
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🔧 Instalação
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Clone o repositório:
+```bash
+git clone https://github.com/seu-usuario/sneaky-complaints.git
+cd sneaky-complaints
+```
 
-Follow these steps:
+2. Instale as dependências:
+```bash
+npm install
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. Configure as variáveis de ambiente:
+```bash
+cp .env.example .env
+```
+Edite o arquivo `.env` com suas configurações.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+4. Inicialize o banco de dados:
+```bash
+npm run db:init
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+5. Inicie o servidor de desenvolvimento:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🗄️ Estrutura do Banco de Dados
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+O sistema utiliza uma arquitetura multi-tenant, onde cada empresa possui seu próprio banco de dados PostgreSQL. A estrutura é a seguinte:
 
-**Use GitHub Codespaces**
+### Banco de Dados Principal
+- Tabela `companies`: Armazena informações das empresas
+- Tabela `users`: Armazena usuários do sistema
+- Tabela `company_databases`: Registra os bancos de dados das empresas
+- Tabela `database_backups`: Registra os backups realizados
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Banco de Dados por Empresa
+Cada empresa possui seu próprio banco de dados com as seguintes tabelas:
+- `complaints`: Denúncias
+- `users`: Usuários da empresa
+- `comments`: Comentários nas denúncias
+- `attachments`: Anexos
+- `activity_logs`: Logs de atividades
 
-## What technologies are used for this project?
+## 🔒 Segurança
 
-This project is built with .
+- Autenticação via JWT
+- Senhas criptografadas com bcrypt
+- Bancos de dados isolados por empresa
+- Backup automático
+- Validação de dados
+- Proteção contra SQL Injection
+- CORS configurado
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📊 Monitoramento
 
-## How can I deploy this project?
+O sistema inclui:
+- Métricas de desempenho
+- Logs de atividades
+- Alertas de segurança
+- Monitoramento de recursos
 
-Simply open [Lovable](https://lovable.dev/projects/27f144e7-0d9f-430d-b6e2-4c63092a7bc2) and click on Share -> Publish.
+## 🤝 Contribuindo
 
-## I want to use a custom domain - is that possible?
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 👥 Autores
+
+- Seu Nome - [@seu-usuario](https://github.com/seu-usuario)
+
+## 🙏 Agradecimentos
+
+- [Shadcn UI](https://ui.shadcn.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [PostgreSQL](https://www.postgresql.org/)

@@ -1,25 +1,19 @@
-
 export type UserRole = 'superadmin' | 'admin' | 'manager' | 'auditor' | 'user';
 
 export type User = {
   id: string;
+  name: string;
   email: string;
-  companyName?: string;
-  role: UserRole;
-  plan?: 'free' | 'pro' | 'enterprise';
-  twoFactorEnabled?: boolean;
-  managedCompanies?: Company[];
+  role: string;
+  companyId?: string;
 };
 
 export type Company = {
   id: string;
   name: string;
-  domain?: string;
-  customDomain?: string;
+  email: string;
   active: boolean;
-  plan: 'free' | 'pro' | 'enterprise';
   createdAt: string;
-  settings: CompanySettings;
 };
 
 export type CompanySettings = {
@@ -32,25 +26,25 @@ export type CompanySettings = {
   requiresAnonymity: boolean;
 };
 
+export type LoginCredentials = {
+  email: string;
+  password: string;
+};
+
+export type RegisterData = {
+  name: string;
+  email: string;
+  password: string;
+  companyName: string;
+};
+
 export type AuthContextType = {
   user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  isSuperAdmin: boolean;
-  login: (email: string, password: string, token?: string, asSuperAdmin?: boolean) => Promise<void>;
-  register: (email: string, password: string, companyName: string) => Promise<void>;
-  logout: () => void;
-  setupTwoFactor: () => Promise<string>;
-  verifyTwoFactor: (token: string) => Promise<boolean>;
-  encryptData: (data: string) => string;
-  decryptData: (encryptedData: string) => string;
-  gdprConsent: boolean;
-  setGdprConsent: (consent: boolean) => void;
-  dataRetentionPeriod: number;
-  createCompany: (company: Omit<Company, 'id' | 'createdAt'>) => Promise<Company>;
-  updateCompanySettings: (companyId: string, settings: Partial<CompanySettings>) => Promise<void>;
-  getCompanies: () => Promise<Company[]>;
-  getCompanyById: (id: string) => Promise<Company | null>;
-  activateCompany: (id: string) => Promise<void>;
-  deactivateCompany: (id: string) => Promise<void>;
+  company: Company | null;
+  loading: boolean;
+  error: string | null;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
+  logout: () => Promise<void>;
+  getCurrentUser: () => Promise<void>;
 };

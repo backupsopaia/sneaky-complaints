@@ -1,42 +1,25 @@
-
 import React from 'react';
-import { Sun, Moon } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/context/theme/ThemeProvider';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
-import { useTheme } from '@/context/theme/useTheme';
 
 const ThemeToggle = () => {
-  const { theme, toggleTheme } = useTheme();
-  const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
 
-  const handleToggleTheme = () => {
-    toggleTheme();
-    toast({
-      title: `Modo ${theme === 'light' ? 'escuro' : 'claro'} ativado`,
-      description: `Aparência do app alterada para modo ${theme === 'light' ? 'escuro' : 'claro'}.`,
-      duration: 2000,
-    });
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={handleToggleTheme}
-      className="rounded-full transition-colors hover:bg-muted"
+      onClick={toggleTheme}
+      className="relative h-9 w-9 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground"
     >
-      <motion.div
-        initial={{ scale: 0.8, rotate: 0 }}
-        animate={{ 
-          scale: 1,
-          rotate: theme === 'dark' ? 0 : 360,
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      >
-        {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
-      </motion.div>
-      <span className="sr-only">Toggle theme</span>
+      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <span className="sr-only">Alternar tema</span>
     </Button>
   );
 };

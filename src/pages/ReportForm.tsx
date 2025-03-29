@@ -1,8 +1,6 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
-import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CompanyVerification from '@/components/report/CompanyVerification';
 import ReportHeader from '@/components/report/ReportHeader';
@@ -139,37 +137,37 @@ const ReportForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      
-      <div className="flex-1 bg-gray-50 py-12">
-        <div className="container px-4 mx-auto max-w-3xl">
-          <ReportHeader />
-          
-          {submissionComplete ? (
-            <TrackingCodeDisplay trackingCode={trackingCode} onDone={handleDone} />
-          ) : !companyVerified ? (
-            <CompanyVerification 
-              companyCode={companyCode}
-              setCompanyCode={setCompanyCode}
-              onVerifyCompany={handleVerifyCompany}
-            />
-          ) : (
-            <ReportFormContent 
-              isAnonymous={isAnonymous}
-              setIsAnonymous={setIsAnonymous}
-              reportData={reportData}
-              handleInputChange={handleInputChange}
-              handleCheckboxChange={handleCheckboxChange}
-              handleSelectChange={handleSelectChange}
-              handleFileChange={handleFileChange}
-              handleSubmit={handleSubmit}
-            />
-          )}
+    <div className="min-h-screen bg-white/50 backdrop-blur-lg dark:bg-transparent">
+      <main className="flex-grow">
+        <div className="py-12">
+          <div className="container px-4 mx-auto max-w-3xl">
+            <ReportHeader />
+            
+            {submissionComplete ? (
+              <TrackingCodeDisplay trackingCode={trackingCode} onDone={handleDone} />
+            ) : !companyVerified ? (
+              <CompanyVerification 
+                companyCode={companyCode}
+                setCompanyCode={setCompanyCode}
+                onVerifyCompany={handleVerifyCompany}
+              />
+            ) : (
+              <ReportFormContent 
+                isAnonymous={isAnonymous}
+                setIsAnonymous={setIsAnonymous}
+                reportData={reportData}
+                handleInputChange={handleInputChange}
+                handleCheckboxChange={handleCheckboxChange}
+                handleSelectChange={handleSelectChange}
+                handleFileChange={handleFileChange}
+                handleSubmit={handleSubmit}
+              />
+            )}
+          </div>
         </div>
-      </div>
-      
-      <Footer />
+        
+        <Footer />
+      </main>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import { FooterSection, MenuItem, SiteContent } from './types';
 
 export const defaultFooter: FooterSection = {
@@ -12,41 +11,39 @@ export const defaultFooter: FooterSection = {
   },
   menuGroups: {
     product: [
-      { id: 'features', label: 'Recursos', url: '#features' },
-      { id: 'pricing', label: 'Preços', url: '#pricing' },
-      { id: 'cases', label: 'Casos de Utilização', url: '#' },
-      { id: 'testimonials', label: 'Testemunhos', url: '#' }
+      { id: 'features', label: 'Recursos', url: '/features' },
+      { id: 'pricing', label: 'Preços', url: '/pricing' },
+      { id: 'cases', label: 'Casos de Utilização', url: '/use-cases' },
+      { id: 'testimonials', label: 'Testemunhos', url: '/testimonials' }
     ],
     company: [
-      { id: 'about', label: 'Sobre Nós', url: '#' },
-      { id: 'blog', label: 'Blog', url: '#' },
-      { id: 'careers', label: 'Carreiras', url: '#' },
-      { id: 'contact', label: 'Contacto', url: '#' }
+      { id: 'about', label: 'Sobre Nós', url: '/about' },
+      { id: 'contact', label: 'Contacto', url: '/contact' }
     ],
     legal: [
-      { id: 'terms', label: 'Termos de Serviço', url: '#' },
-      { id: 'privacy', label: 'Política de Privacidade', url: '#' },
-      { id: 'cookies', label: 'Política de Cookies', url: '#' },
-      { id: 'lgpd', label: 'Proteção de Dados', url: '#' }
+      { id: 'terms', label: 'Termos de Serviço', url: '/terms' },
+      { id: 'privacy', label: 'Política de Privacidade', url: '/privacy' },
+      { id: 'cookies', label: 'Política de Cookies', url: '/cookies' },
+      { id: 'lgpd', label: 'Proteção de Dados', url: '/data-protection' }
     ]
   }
 };
 
 export const defaultNavigation: MenuItem[] = [
   { id: 'home', label: 'Início', url: '/' },
+  { id: 'about', label: 'Sobre', url: '/about' },
   { id: 'features', label: 'Recursos', url: '#features' },
-  { id: 'pricing', label: 'Preços', url: '#pricing' },
+  { id: 'pricing', label: 'Preços', url: '/pricing' },
   { id: 'report', label: 'Fazer Denúncia', url: '/report' },
   { id: 'check', label: 'Verificar Estado', url: '/check-status' }
 ];
 
 export const defaultContent: SiteContent = {
   homepage: {
-    title: 'Canal de denúncias seguro e eficiente para a sua empresa',
-    subtitle: 'Implemente um canal de denúncias em minutos, garantindo conformidade, anonimato e gestão eficiente.',
-    bodyText: '<p>O nosso sistema de denúncias oferece uma plataforma segura e anónima para reportar irregularidades e problemas éticos na sua organização.</p><p>Conformidade com as principais leis e regulamentos nacionais e internacionais, incluindo o Regulamento Geral de Proteção de Dados (RGPD).</p>',
-    bannerImage: '/placeholder.svg',
-    customNotification: 'Bem-vindo ao sistema de denúncias. Todas as comunicações são seguras e anónimas.'
+    title: "Canal de Denúncias Seguro e Anônimo",
+    subtitle: "Proteja sua empresa e seus colaboradores com uma plataforma confiável para denúncias",
+    bodyText: "<p>Ofereça um ambiente seguro para seus colaboradores reportarem irregularidades, mantendo a confidencialidade e garantindo que cada denúncia seja tratada com a seriedade necessária.</p>",
+    bannerImage: "/images/hero-banner.jpg"
   },
   login: {
     title: 'Bem-vindo ao Canal de Denúncias',
@@ -62,6 +59,40 @@ export const defaultContent: SiteContent = {
     bannerImage: '/placeholder.svg',
     customNotification: 'Novas denúncias são destacadas automaticamente para a sua atenção.'
   },
-  navigation: defaultNavigation,
-  footer: defaultFooter
+  navigation: [
+    { id: "1", name: "Início", href: "/" },
+    { id: "2", name: "Sobre", href: "/about" },
+    { id: "3", name: "Recursos", href: "/features" },
+    { id: "4", name: "Preços", href: "/pricing" },
+    { id: "5", name: "Fazer Denúncia", href: "/report" },
+    { id: "6", name: "Verificar Estado", href: "/check-status" }
+  ],
+  footer: {
+    companyDescription: "Plataforma segura e eficiente para gestão de denúncias empresariais.",
+    copyright: "© 2024 Sneaky Complaints. Todos os direitos reservados.",
+    socialLinks: {
+      facebook: "https://facebook.com/sneakycomplaints",
+      twitter: "https://twitter.com/sneakycomplaints",
+      instagram: "https://instagram.com/sneakycomplaints",
+      linkedin: "https://linkedin.com/company/sneakycomplaints"
+    },
+    menuGroups: {
+      product: [
+        { id: "7", name: "Recursos", href: "/features" },
+        { id: "8", name: "Preços", href: "/pricing" },
+        { id: "9", name: "Casos de Uso", href: "/use-cases" },
+        { id: "10", name: "Testemunhos", href: "/testimonials" }
+      ],
+      company: [
+        { id: "11", name: "Sobre Nós", href: "/about" },
+        { id: "12", name: "Contato", href: "/contact" }
+      ],
+      legal: [
+        { id: "13", name: "Termos de Serviço", href: "/terms" },
+        { id: "14", name: "Política de Privacidade", href: "/privacy" },
+        { id: "15", name: "Política de Cookies", href: "/cookies" },
+        { id: "16", name: "Proteção de Dados", href: "/data-protection" }
+      ]
+    }
+  }
 };
